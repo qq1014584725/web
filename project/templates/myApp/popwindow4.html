@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{student.Pname}}</title>
+
+    {% load staticfiles %}
+    <script type="text/javascript" src="/static/myApp/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/static/myApp/js/jquery.media.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $('a.media').media(width:450, height:350);
+        });
+    </script>
+
+</head>
+<body>
+        <h1>{{message}}</h1>
+
+        {% for Test in AllTest %}
+            <p>
+                <a class="media" href="/static/myApp/upload/{{student.id}}/test/{{Test.name}}">{{Test.name}}</a>
+            </p>
+        {% endfor %}
+</body>
+</html>
