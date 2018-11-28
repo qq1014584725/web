@@ -129,14 +129,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/')]
 MEDIA_URL = '/static/myApp/upload/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/myApp/upload/')
 
-
-ADMINS = (
-    ('admin', '1014584725@qq.com'),
-)
-
-
-#日志文件
-LOGGING = {
+GGING = {
     'version' : 1,
     'disable_existing_loggers' : False,
     'handlers' : {
@@ -159,3 +152,4 @@ LOGGING = {
         }
     },
 }
+
