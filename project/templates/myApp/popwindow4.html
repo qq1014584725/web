@@ -13,6 +13,13 @@
         });
     </script>
 
+    <script>
+            function popupFunc(url)
+            {
+                window.open(url, url, "status=1, height:1000, width:800, toolbar=0, resizeable=0")
+            }
+    </script>
+
 </head>
 <body>
         <h1>{{message}}</h1>
@@ -20,6 +27,7 @@
         {% for Test in AllTest %}
             <p>
                 <a class="media" href="/static/myApp/upload/{{student.id}}/test/{{Test.name}}">{{Test.name}}</a>
+                <!--<a href="javascript:void(0);" onclick="popupFunc(/{{Test.name}}_{{student.id}}/)">教师评分</a>-->
             </p>
         {% endfor %}
 </body>

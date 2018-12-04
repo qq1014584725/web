@@ -70,15 +70,15 @@
     }
 </script>
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-function fileChange(target){
+function fileChange1(target){
 //检测上传文件的类型
 var imgName = document.all.up_file1.value;
-var imgName = document.all.up_file2.value;
+<!--var imgName = document.all.up_file2.value;-->
      var ext,idx;
     if (imgName == ''){
-       document.all.submit_upload.disabled=true;
+       document.all.submit_upload1.disabled=true;
         <!--alert("请选择需要上传的文件!");-->
         return;
     } else {
@@ -88,12 +88,12 @@ var imgName = document.all.up_file2.value;
             ext = ext.toLowerCase( );
            // alert("ext="+ext);
             if (ext != 'pdf'){
-              document.all.submit_upload.disabled=true;
+              document.all.submit_upload1.disabled=true;
                 alert("只能上传 .pdf 类型的文件!");
                 return;
             }
         } else {
-          document.all.submit_upload.disabled=true;
+          document.all.submit_upload1.disabled=true;
            alert("只能上传.pdf 类型的文件!");
             return;
         }
@@ -114,13 +114,16 @@ var imgName = document.all.up_file2.value;
     var maxsize = 400* 1024*1024;
 
     if(fileSize>maxsize){
-    document.all.submit_upload.disabled=true;
+    document.all.submit_upload1.disabled=true;
         alert("文件大小不能超过400M");
     }else{
-    document.all.submit_upload.disabled=false;
+    document.all.submit_upload1.disabled=false;
     }
 }
+
+
 </script>
+
 
 <body onLoad="showTime()" class="body">
         <form name="timeform" method="POST" action="">
@@ -149,38 +152,53 @@ var imgName = document.all.up_file2.value;
                 <li><a href="{% url 'myApp:selfestimate' %}">研究生自我评价表</a></li>
             </ul>
 
-            <form method="post" enctype="multipart/form-data">
+
+        <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <table align="center" style="position:relative;top:100px;">
+                <table align="center" style="position:relative;top:100px;" >
                     <tbody>
-                        <tr></tr>
-                        <tr>
-                            <td>请上传作业</td>
-                            <td><input type="file"  id="up_file1" name="test" onchange="fileChange(this);" align="center" multiple ></td>
-                        </tr>
-                        <tr>
-                            <td>请上传论文</td>
-                            <td><input type="file" id="up_file2" name="homework" onchange="fileChange(this);" align="center" multiple ></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2"><input id="submit_upload" type="submit" class="load-btn" value="上传" name="submit" disabled></td>
-                        </tr>
+                            <tr>
+                                <td>{{filename.UpType}}</td>
+                                <td><input type="file"  id="up_file1" name="test" onchange="fileChange1(this);" align="center" multiple ></td>
+                                <td><input id="submit_upload1" type="submit" class="load-btn" value="上传" name="submit" disabled></td>
+                            </tr>
                     </tbody>
                 </table>
-            </form>
+        </form>
+
             <table align="center" border="1" style="position:relative;top:100px;">
                 <tr>
                     <td>
-                        {% for item in document_homework %}
-                        <p>{{item.name}}</p>
-                        {% endfor %}
+                        已上交的作业
+                    </td>
+                    <td>
+                        {% if document_homework %}
+
+                            {% for item in document_homework %}
+                            <p>{{item.name}}</p>
+                            {% endfor %}
+
+                        {% else %}
+                            {{'学生还未提交作业'}}
+
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        {% for item in document_test %}
-                        <p>{{item.name}}</p>
-                        {% endfor %}
+                        已上交的论文
+                    </td>
+                    <td>
+                        {% if document_test %}
+
+                            {% for item in document_test %}
+                            <p>{{item.name}}</p>
+                            {% endfor %}
+
+                        {% else %}
+                            {{'学生还未提交论文'}}
+
+                        {% endif %}
                     </td>
                 </tr>
             </table>

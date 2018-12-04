@@ -5,6 +5,12 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import *
 from .forms import *
 
+# from pdfminer.pdfparser import PDFParser,PDFDocument
+# from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+# from pdfminer.converter import PDFPageAggregator
+# from pdfminer.layout import LAParams, LTTextBoxHorizontal
+
+
 # Create your views here.
 
 def ProfessorEvaluate(Professor):
@@ -27,7 +33,72 @@ def ProfessorEvaluate(Professor):
     b = 1/(1 + g)
     return (Q_, b)
 
+# def changePdfToText(filePath):
+#     # 获取文档对象
+#     pdf0 = open(filePath, 'rb')
+#
+#     # 创建一个与文档关联的解释器
+#     parser = PDFParser(pdf0)
+#
+#     # 创建一个PDF文档对象
+#     doc = PDFDocument()
+#
+#     # 连接两者
+#     parser.set_document(doc)
+#     doc.set_parser(parser)
+#
+#     # 文档初始化
+#     doc.initialize('')
+#
+#     # 创建PDF资源管理器
+#     resources = PDFResourceManager()
+#
+#     # 创建参数分析器
+#     laparam = LAParams()
+#
+#     # 创建一个聚合器，并接收资源管理器，参数分析器作为参数
+#     device = PDFPageAggregator(resources, laparams=laparam)
+#
+#     # 创建一个页面解释器
+#     interpreter = PDFPageInterpreter(resources, device)
+#
+#     result = ''
+#     # 使用文档对象获取页面的集合
+#     for page in doc.get_pages():
+#         # 使用页面解释器读取页面
+#         interpreter.process_page(page)
+#         # 使用聚合器读取页面页面内容
+#         layout = device.get_result()
+#
+#         i = 1
+#         for out in layout:
+#             if (isinstance(out,LTTextBoxHorizontal)):
+#                 if i != 1:
+#                     result = result + out.get_text()
+#                 i += 1
+#
+#     pdf0.close()
+#     return result
+#
+# def jiansuo(keyword, host):
+#     CONTENT = ['']
+#     for line in host:
+#         l = ''
+#         for key in keyword:
+#             splt = line.split(key)
+#             if (len(splt) - 1):
+#                 string = ''
+#                 for item in splt[0: -1]:
+#                     string = string + item + "<%s>" % (key)
+#                 string = string + splt[-1]
+#                 l = line = string
+#
+#         if len(l):
+#             CONTENT.append(l)
+#
+#     return CONTENT
 
+######################################################
 def index(request):
     return render(request, 'myApp/index.html')
 
@@ -97,23 +168,29 @@ def studentuser(request):
     if  request.session.get("username", None):
         username = request.session.get("username")
         user = Postgraduates.objects.get(Pid = username)
+        filename = UpFile()
         if request.method == 'POST':
-            if 'submit' in request.POST:
-                for file in request.FILES.getlist('test'):
-                    empt = PostgraduatesTest()
-                    empt.postgraduates = user
-                    empt.Ptest = file
-                    empt.student_id = str(user.id)
-                    empt.name = file.name
-                    empt.save()
+            fileform = UpFile(request.POST)
+            if fileform.is_valid():
+                FileName = fileform.cleaned_data['UpType']
+                if 'submit' in request.POST:
+                    if FileName == '上传论文':
+                        for file in request.FILES.getlist('test'):
+                            empt = PostgraduatesTest()
+                            empt.postgraduates = user
+                            empt.Ptest = file
+                            empt.student_id = str(user.id)
+                            empt.name = file.name
+                            empt.save()
 
-                for file in request.FILES.getlist('homework'):
-                    empt = PostgraduatesHomework()
-                    empt.postgraduates = user
-                    empt.Phomework = file
-                    empt.student_id = str(user.id)
-                    empt.name = file.name
-                    empt.save()
+                    elif FileName == '上传作业':
+                        for file in request.FILES.getlist('test'):
+                            empt = PostgraduatesHomework()
+                            empt.postgraduates = user
+                            empt.Phomework = file
+                            empt.student_id = str(user.id)
+                            empt.name = file.name
+                            empt.save()
 
         else:
             try:
@@ -655,6 +732,32 @@ def popwindow(request, num):
 
     else:
         return redirect('myApp:teacher')
+
+# def checkwindow(request, title):
+#     message = ""
+#     if request.session.get("username", None):
+#         username = request.session.get("username")
+#         user = Teachers.objects.get(Tid=username)
+#         L = title.split('_')
+#         student = L[-1]
+#         Title = L[0]
+#         content_ = changePdfToText('static/myApp/upload/%s/test/%s' % (student, Title))
+#         key_word = content_.split('关键词：')[1]
+#         key_word = key_word.split('\n')[0]
+#         key_word = key_word.split('，')
+#         content = ''
+#         for i in content_.split('第一章')[2:]:
+#             content = content + i
+#         content = content.split('参考文献')[0]
+#         content = content.split('。')
+#
+#         JianSuo = jiansuo(key_word, content)
+#
+#         return render(request, 'myApp/checkwindow.html', locals())
+#
+#     else:
+#         return redirect('myApp:teacher')
+
 
 def logouts(request):
     request.session.clear()
