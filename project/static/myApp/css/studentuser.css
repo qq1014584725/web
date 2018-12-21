@@ -1,15 +1,18 @@
         ul {
+            white-space: nowrap;
             list-style-type:none;
             margin: 0;
             padding: 0;
-            width: 12%;
-            background-color: #f1f1f1;
+            width: 200px;
+            background-color: #ffffff;
             position: fixed;
             height: 100%;
             overflow: auto;
+			border: 1px solid rgb(191,229,213);
         }
 
         li a {
+            white-space: nowrap;
             display: block;
             color: #000;
             padding: 8px 16px;
@@ -17,10 +20,6 @@
         }
 
 
-        li a:hover:not(.active) {
-            background-color: #555;
-            color: white;
-        }
         .header{
                 height:60px;
                 width:15%;
@@ -52,13 +51,50 @@
                 <!--padding-top: 30px-->
                 <!--}-->
         .menu_head {
+                white-space: nowrap;
                 height: 30px;
                 line-height: 30px;
                 padding-left: 10px;
                 font-size: 14px;
-                border: 1px solid #f1f1f1;
-                position: relative;
+                position: absolute;
                 margin: 0px;
                 font-weight: bold;
-                background: #ccc;
+                top:45px;
+                left:297px;
                 }
+        .body{
+
+                background-color:rgb(240,255,251);
+                }
+
+                .load-btn {
+                    white-space: nowrap;
+                    }
+							.nav {
+								<!--overflow: hidden;-->
+								<!--background-color: #f4f4f4;-->
+							}
+							.nav li {
+								padding: 5px;
+								width: 217px;
+								color: #666;
+								list-style: none;
+								border-left: 1px solid #f4f4f4;
+								cursor: pointer;
+
+
+							}
+							.nav li:hover,.selected {
+							    background-image: -webkit-gradient( linear,right top,left bottom,from(palegreen), to(transparent));
+								<!--background-color:#ecebeb;-->
+								border-left: 5px solid #ecebeb;
+							    text-align:center;
+
+							}
+							.content{
+								<!--border: 1px solid #f4f4f4;-->
+								height: 1000px;
+								<!--padding: 15px;-->
+								<!--overflow: hidden;-->
+								align:center;
+							}

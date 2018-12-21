@@ -5,363 +5,217 @@
     <title>{{user.Pname}}</title>
 </head>
 
-{% load staticfiles %}
+    <script>
+            function kp1(txt){
+        <!--var kp = function(txt){-->
+            if(!/^([1-9]|10)$/.test(txt.value)){
+                txt.style.borderColor = "red";
+                s = txt.value * 1;
+                <!--return false;-->
+                document.all.btn1.disabled=true;
+            }else{
+                txt.style.borderColor = "";
+                s = "-11";
+                <!--return true;-->
+                document.all.btn1.disabled=true;
+            }
+        }
+        function judge1(){
+                            var c = 0;
+
+                    if(s > 10 || s == 0){
+                        alert("请输入数字1-10")
+                        <!--return false;-->
+                document.all.btn1.disabled=true;
+                return;
+                    }
+                    if(s == "-11"){
+                            <!--return turn;-->
+                            var list = document.getElementsByTagName("input");
+                            var regexp1 = /^([1-9]|10)$/;
+                            for (var i = 0; i < list.length; i++) {
+                            // 判断是否为文本框
+                                if (list[i].type == "text") {
+                                // 判断文本框是否为空
+                                    if (list[i].value == "") {
+                                    document.all.btn1.disabled=true;}
+                                    //判断list的第i个值是否为1-10
+                                     if (list[i].value > 10 || list[i].value < 1) {
+                                        c = c + 1;
+                                     <!--if(!regexp1.test(list[i].value)){-->
+                                    <!--if (!list[i].value < 11 ) {-->
+                                        <!--if (list[i].value > 0 ) {-->
+                                            document.all.btn1.disabled=true;}
+
+                        }
+                        if(c == 0) {
+                            document.all.btn1.disabled=false;}
+                        }
+
+                        }
+
+                     else{
+                        alert("格式不对");
+                document.all.btn1.disabled=true;
+                 }
+}
+
+
+
+
+
+
+    </script>
+    <script>
+                function kp2(txt){
+            <!--var kp = function(txt){-->
+                if(!/^([1-9]|10)$/.test(txt.value)){
+                    txt.style.borderColor = "red";
+                    s = txt.value * 1;
+                    <!--return false;-->
+                    document.all.btn2.disabled=true;
+                }else{
+                    txt.style.borderColor = "";
+                    s = "-11";
+                    <!--return true;-->
+                    document.all.btn2.disabled=true;
+                }
+            }
+            function judge2(){
+                                var c = 0;
+
+                        if(s > 10 || s == 0){
+                            alert("请输入数字1-10")
+                            <!--return false;-->
+                    document.all.btn2.disabled=true;
+                    return;
+                        }
+                        if(s == "-11"){
+                                <!--return turn;-->
+                                var list = document.getElementsByTagName("input");
+                                var regexp1 = /^([1-9]|10)$/;
+                                for (var i = 0; i < list.length; i++) {
+                                // 判断是否为文本框
+                                    if (list[i].type == "text") {
+                                    // 判断文本框是否为空
+                                        if (list[i].value == "") {
+                                        document.all.btn2.disabled=true;}
+                                        //判断list的第i个值是否为1-10
+                                         if (list[i].value > 10 || list[i].value < 1) {
+                                            c = c + 1;
+                                                document.all.btn2.disabled=true;}
+
+                            }
+                            if(c == 0) {
+                                document.all.btn2.disabled=false;}
+                            }
+
+                            }
+
+                         else{
+                            alert("格式不对");
+                    document.all.btn2.disabled=true;
+                     }
+}
+
+        </script>
+
+    {% load staticfiles %}
     <link rel="stylesheet" type="text/css"
           href="{% static '/myApp/css/studentselfestimate.css' %}">
 
 <body>
 
-
-    <a href="{% url 'myApp:studentuser' %}" >用户</a>
+<div class="container">
+    <a href="{% url 'myApp:studentuser' %}" >返回用户</a>
+    <a href="{% url 'myApp:selfestimate' %}" >返回评价</a>
 
     <h1 class="header">研究生自评表</h1>
     <hr size="1" noshade="noshade" width="100%">
     <div class="zhushi">
-        *可输入整数、小数、10为很好
+        *请输入整数1-10，10为很好
     </div>
 
-    <form method="post">
+    <form method="post" style="white-space: nowrap;" id="allow" action="" onsubmit="return checkForm">
         {% csrf_token %}
 
-        {% if message == "see" %}
-            <table style="margin:0px auto" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
-                <tbody>
-                        <tr align="center">
-                            <td rowspan="8">适应能力</td>
-                            <td>表达能力</td>
-                            <td>{{self1.ExpressAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>记忆能力</td>
-                            <td>{{self1.RemberAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>交往能力</td>
-                            <td>{{self1.InteractAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>自我学习能力</td>
-                            <td>{{self1.Selflearning}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>逻辑思维能力</td>
-                            <td>{{self1.LogicAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>系统思维能力</td>
-                            <td>{{self1.SystemMind}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>专注能力</td>
-                            <td>{{self1.ConcentrateAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>适应变化能力</td>
-                            <td>{{self1.AdaptDiverse}}</td>
-                        </tr>
-                </tbody>
+    {% if message == '无' %}
 
-                <tbody>
-                        <tr align="center">
-                            <td rowspan="7">创新能力</td>
-                            <td>独立思考能力</td>
-                            <td>{{self2.IndependMind}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>发现问题能力</td>
-                            <td>{{self2.ProblemFind}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>推测预见能力</td>
-                            <td>{{self2.PredictAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>知识迁移能力</td>
-                            <td>{{self2.KnowledgeMigrate}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>发散思维能力</td>
-                            <td>{{self2.MindExpand}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>反思能力</td>
-                            <td>{{self2.Remind}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>应变能力</td>
-                            <td>{{self2.React}}</td>
-                        </tr>
-                </tbody>
+    <table style="margin:0px auto;white-space: nowrap;" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
+    {% for i,j,k in zhibiao %}
+        <tbody>
+                <tr align="center">
+                    <td align="center" rowspan={{k}}>{{i.targetname}}</td>
+                    {% for xiaozhibiao in j %}
+                        <td align="center">{{xiaozhibiao.targetname}}</td>
+                        <td align="center"><input type="text" onchange="kp1(this),judge1()"  maxlength="2" name={{xiaozhibiao.targetname}} /></td>
+                </tr>
+                    {% endfor %}
+        </tbody>
+    {% endfor %}
+    </table>
 
-                <tbody>
-                        <tr align="center">
-                            <td rowspan="12">工作能力</td>
-                            <td>人际关系能力</td>
-                            <td>{{self3.InterpersonAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>分解问题能力</td>
-                            <td>{{self3.ProblemReduce}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>解决问题能力</td>
-                            <td>{{self3.ProblemDeal}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>只是转化能力</td>
-                            <td>{{self3.KnowladgeChange}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>团队协作能力</td>
-                            <td>{{self3.TeamCooperation}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>执行能力</td>
-                            <td>{{self3.ExcuteAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>组织能力</td>
-                            <td>{{self3.OrganizeAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>转移经验能力</td>
-                            <td>{{self3.ExperienceTransform}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>专业技术能力</td>
-                            <td>{{self3.ProfessSkill}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>计划能力</td>
-                            <td>{{self3.PlanAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>抗压能力</td>
-                            <td>{{self3.PressAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>利益协调能力</td>
-                            <td>{{self3.BenefitCoordinate}}</td>
-                        </tr>
-                </tbody>
+        <div style="position:relative;margin:0 auto;width:130px;height:0px;top:10px;margin-bottom:100px">
+            <input align="center" type="submit" value="提交" id="btn1" name="submit" disabled>
+        </div>
 
-                <tbody>
-                        <tr align="center">
-                            <td rowspan="8">其他综合能力</td>
-                            <td>感知能力</td>
-                            <td>{{self4.PreceptionAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>观察能力</td>
-                            <td>{{self4.ObserveAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>鉴别评价能力</td>
-                            <td>{{self4.AssessAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>进取能力</td>
-                            <td>{{self4.EnterpriseAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>理论理解能力</td>
-                            <td>{{self4.TheoryUnderstand}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>信息处理能力</td>
-                            <td>{{self4.MessageDeal}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>正向影响能力</td>
-                            <td>{{self4.PositiveEffect}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>只是集成能力</td>
-                            <td>{{self4.KnowladgeCombine}}</td>
-                        </tr>
-                </tbody>
-            </table>
+    {% elif message == '有' %}
+        <table style="margin:0px auto" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
+    {% for i,j,k in xianshifen %}
+        <tbody>
+                <tr align="center">
+                    <td align="center" rowspan={{k}}>{{i.targetname}}</td>
+                    {% for xiaofenname,fen in j %}
+                        <td align="center">{{xiaofenname.targetname}}</td>
+                        <td align="center">
+                            <font color="red">
+                                {{fen.score}}
+                            </font>
+                        </td>
+                </tr>
+                    {% endfor %}
+        </tbody>
+    {% endfor %}
+    </table>
 
-            <p align="center">
-                <input type="submit" value="返回" name="back">
-            </p>
+        <div style="position:relative;margin:0 auto;width:130px;height:0px;top:10px;margin-bottom:100px">
+            <input align="center" type="submit" value="更改" name="exchange">
+        </div>
 
-        {% else %}
-            <h2 class="header">{{message}}</h2>
-            <table style="margin:0px auto" border="1" width="60%" bgcolor="#e9faff" cellpadding="8" align="center">
-                <tbody>
-                        <tr align="center">
-                            <td rowspan="8">适应能力</td>
-                            <td>表达能力</td>
-                            <td>{{login_form.ExpressAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>记忆能力</td>
-                            <td>{{login_form.RemberAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>交往能力</td>
-                            <td>{{login_form.InteractAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>自我学习能力</td>
-                            <td>{{login_form.Selflearning}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>逻辑思维能力</td>
-                            <td>{{login_form.LogicAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>系统思维能力</td>
-                            <td>{{login_form.SystemMind}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>专注能力</td>
-                            <td>{{login_form.ConcentrateAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>适应变化能力</td>
-                            <td>{{login_form.AdaptDiverse}}</td>
-                        </tr>
-                </tbody>
+    {% elif message == '改' %}
+        <table style="margin:0px auto" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
+    {% for i,j,k in xianshifen %}
+        <tbody>
+                <tr align="center">
+                    <td align="center" rowspan={{k}}>{{i.targetname}}</td>
+                    {% for xiaozhibiao,fen in j %}
+                        <td align="center">{{xiaozhibiao.targetname}}</td>
+                        <td align="center">
+                            <font color="red">
+                                {{fen.score}}
+                            </font>
+                        </td>
+                        <td align="center">
+                                <input onchange="kp2(this),judge2()" maxlength="2" type="text" name={{xiaozhibiao.targetname}} value={{fen.score}} >
+                        </td>
+                </tr>
+                    {% endfor %}
+        </tbody>
+    {% endfor %}
+    </table>
 
-                <tbody>
-                        <tr align="center">
-                            <td rowspan="7">创新能力</td>
-                            <td>独立思考能力</td>
-                            <td>{{login_form.IndependMind}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>发现问题能力</td>
-                            <td>{{login_form.ProblemFind}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>推测预见能力</td>
-                            <td>{{login_form.PredictAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>知识迁移能力</td>
-                            <td>{{login_form.KnowledgeMigrate}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>发散思维能力</td>
-                            <td>{{login_form.MindExpand}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>反思能力</td>
-                            <td>{{login_form.Remind}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>应变能力</td>
-                            <td>{{login_form.React}}</td>
-                        </tr>
-                </tbody>
+        <div style="position:relative;margin:0 auto;width:130px;height:0px;top:10px;margin-bottom:100px">
+            <input align="center" type="submit" value="保存更改" name="save" id="btn2">
+        </div>
 
-                <tbody>
-                        <tr align="center">
-                            <td rowspan="12">工作能力</td>
-                            <td>人际关系能力</td>
-                            <td>{{login_form.InterpersonAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>分解问题能力</td>
-                            <td>{{login_form.ProblemReduce}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>解决问题能力</td>
-                            <td>{{login_form.ProblemDeal}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>只是转化能力</td>
-                            <td>{{login_form.KnowladgeChange}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>团队协作能力</td>
-                            <td>{{login_form.TeamCooperation}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>执行能力</td>
-                            <td>{{login_form.ExcuteAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>组织能力</td>
-                            <td>{{login_form.OrganizeAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>转移经验能力</td>
-                            <td>{{login_form.ExperienceTransform}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>专业技术能力</td>
-                            <td>{{login_form.ProfessSkill}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>计划能力</td>
-                            <td>{{login_form.PlanAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>抗压能力</td>
-                            <td>{{login_form.PressAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>利益协调能力</td>
-                            <td>{{login_form.BenefitCoordinate}}</td>
-                        </tr>
-                </tbody>
+    {% endif %}
 
-                <tbody>
-                        <tr align="center">
-                            <td rowspan="8">其他综合能力</td>
-                            <td>感知能力</td>
-                            <td>{{login_form.PreceptionAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>观察能力</td>
-                            <td>{{login_form.ObserveAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>鉴别评价能力</td>
-                            <td>{{login_form.AssessAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>进去能力</td>
-                            <td>{{login_form.EnterpriseAbility}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>理论理解能力</td>
-                            <td>{{login_form.TheoryUnderstand}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>信息处理能力</td>
-                            <td>{{login_form.MessageDeal}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>正向影响能力</td>
-                            <td>{{login_form.PositiveEffect}}</td>
-                        </tr>
-                        <tr align="center">
-                            <td>只是集成能力</td>
-                            <td>{{login_form.KnowladgeCombine}}</td>
-                        </tr>
-                </tbody>
-            </table>
-
-    <div style="margin:0 auto;width:130px;height:0px;">
-                    <input type="submit" value="提交" name="submit">
-    </div>
 
     </form>
-
-    <form method="post">
-        {% csrf_token %}
-    <div style="margin:-12px auto;width:20px;height:60px;text-align:center;">
-            <input type="submit" value="预览" name="see">
-    </div>
-    </form>
-        {% endif %}
-
-    <div class="foot">
-        重庆富博有限公司
+</div>
+<div><h1></h1><p></p></div>
+    <div class="footer">
+        <span>重庆富博有限公司</span>
     </div>
 
 

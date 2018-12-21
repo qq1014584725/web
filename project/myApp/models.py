@@ -6,19 +6,21 @@ import os
 
 #研究生用户表
 class Postgraduates(models.Model):
-    Pid = models.CharField(max_length=50)
-    Pname = models.CharField(max_length=50)
-    Ppassword = models.CharField(max_length=50)
-    Pgender = models.BooleanField(default=True)
-    Pgrade = models.IntegerField()
-    Pdegree = models.CharField(max_length=50)
-    Pexperience = models.CharField(max_length=50)
+    Pid = models.CharField(max_length=50, verbose_name='学号')
+    Pname = models.CharField(max_length=50, verbose_name='姓名')
+    Ppassword = models.CharField(max_length=50, verbose_name='密码')
+    Pgender = models.BooleanField(default=True, verbose_name='性别')
+    Pgrade = models.IntegerField(verbose_name='年级')
+    Pdegree = models.CharField(max_length=50, verbose_name='专业学位')
+    Pexperience = models.CharField(max_length=50, verbose_name='工作经历')
+
+    class Meta:
+        db_table = 'myApp_Postgraduates'  # 数据库名
+        verbose_name = '学生'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '学生用户管理'  # 修改管理级页面显示
 
     def __str__(self):
-        if self.Pgender:
-            return '男'
-        else:
-            return '女'
+        return self.Pname
 
 def upload_to1(instance, filename):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -48,256 +50,189 @@ class PostgraduatesHomework(models.Model):
 #教师用户表
 class Teachers(models.Model):
     Tid = models.CharField(max_length=50)
-    Tname = models.CharField(max_length=50)
-    Tweight = models.FloatField()
-    Tpassword = models.CharField(max_length=50)
+    Tname = models.CharField(max_length=50, verbose_name='姓名')
+    Tweight = models.FloatField(verbose_name='权重')
+    Tpassword = models.CharField(max_length=50, verbose_name='密码')
+
+    def __str__(self):
+        return self.Tname
+
+    class Meta:
+        db_table = 'myApp_Teachers'  # 数据库名
+        verbose_name = '教师'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '教师用户管理'  # 修改管理级页面显示
 # ////////////////////////////
 
 
 #培养安排因素
-class CultivateFactors(models.Model):
-    CONTENT = {("满意","满意"),
-               ("一般","一般"),
-               ("较差","较差")}
-    CoursePractice = models.CharField(max_length=5, choices=CONTENT)
-
-    PRACTICE = {("经常","经常"),
-                ("偶尔","偶尔"),
-                ("从来没有","从来没有")}
-    E_IndustryDynamics = models.CharField(max_length=10, choices=PRACTICE)
-    E_PracticeCombine = models.CharField(max_length=10, choices=PRACTICE)
-    E_UseingCase = models.CharField(max_length=10, choices=PRACTICE)
-    E_DifferentActivity = models.CharField(max_length=10, choices=PRACTICE)
 
 
-    F_IndustryDynamics = models.CharField(max_length=10, choices=PRACTICE)
-    F_PracticeCombine = models.CharField(max_length=10, choices=PRACTICE)
-    F_UseingCase = models.CharField(max_length=10, choices=PRACTICE)
-    F_DifferentActivity = models.CharField(max_length=10, choices=PRACTICE)
-    F_TraditionClass = models.CharField(max_length=10, choices=PRACTICE)
-    EFFECT = {("很好","很好"),
-               ("一般","一般"),
-               ("没有效果","没有效果")}
-    F_CourseEffect = models.CharField(max_length=10, choices=EFFECT)
+class Factors(models.Model):
+    factorname = models.CharField(max_length=30, verbose_name='因素名称')
 
-    I_TeacherDirect = models.CharField(max_length=10, choices=EFFECT)
-    O_TeacherDirect = models.CharField(max_length=10, choices=EFFECT)
-    I_TeacherAbility = models.CharField(max_length=10, choices=EFFECT)
-    O_TeacherAbility = models.CharField(max_length=10, choices=EFFECT)
+    class Meta:
+        db_table = 'myApp_Factors'  # 数据库名
+        verbose_name = '综合培养因素'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '综合培养因素管理'  # 修改管理级页面显示
 
-    RELATE = {("联系紧密","联系紧密"),
-               ("联系一般","联系一般"),
-               ("没有联系","没有联系")}
-    ThesisCombinePractice = models.CharField(max_length=10, choices=RELATE)
+    def __str__(self):
+        return self.factorname
 
-    postgraduates = models.OneToOneField("Postgraduates", on_delete=models.CASCADE)
-# ////////////////////////////
+class Sub1Factors(models.Model):
+    factorname = models.CharField(max_length=30, verbose_name='一级因素名称')
+    isvalue = models.BooleanField(default=False)
+    value = models.CharField(null=True, max_length=30, verbose_name='选项值')
+
+    factors = models.ForeignKey(Factors, on_delete=models.CASCADE, verbose_name='所属因素', null=True)
+
+    class Meta:
+        db_table = 'myApp_Sub1Factors'  # 数据库名
+        verbose_name = '一综合养因素'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '一级综合因素管理'  # 修改管理级页面显示
+
+    def __str__(self):
+        return ('1_' + self.factorname)
+
+class Sub2Factors(models.Model):
+    factorname = models.CharField(max_length=30, verbose_name='二级因素名称')
+    isvalue = models.BooleanField(default=False)
+    value = models.CharField(null=True, max_length=30, verbose_name='选项值')
+
+    factors = models.ForeignKey(Sub1Factors, on_delete=models.CASCADE, verbose_name='所属因素')
+
+    class Meta:
+        db_table = 'myApp_Sub2Factors'  # 数据库名
+        verbose_name = '二级综合因素'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '二级综合因素管理'  # 修改管理级页面显示
+
+    def __str__(self):
+        return ('2_' + self.factorname)
+
+class Sub3Factors(models.Model):
+    factorname = models.CharField(max_length=30, verbose_name='三级因素名称')
+    isvalue = models.BooleanField(default=False)
+    value = models.CharField(null=True, max_length=30, verbose_name='选项值')
+
+    factors = models.ForeignKey(Sub2Factors, on_delete=models.CASCADE, verbose_name='所属因素')
+
+    class Meta:
+        db_table = 'myApp_Sub3Factors'  # 数据库名
+        verbose_name = '三级综合因素'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '三级综合因素管理'  # 修改管理级页面显示
+
+    def __str__(self):
+        return ('3_' + self.factorname)
+
+class StudentFactorsvalue1(models.Model):
+    factorsvalue = models.CharField(max_length=30, verbose_name='评价')
+
+    postgraduates = models.ForeignKey("Postgraduates", on_delete=models.CASCADE)
+    factorsattribute = models.ForeignKey(Sub1Factors, on_delete=models.CASCADE, verbose_name='所属因素')
+
+    class Meta:
+        db_table = 'myApp_StudentFactorsvalue1'  # 数据库名
+        verbose_name = '一级因素评分'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '一级因素评分'  # 修改管理级页面显示
+
+    def __str__(self):
+        return (self.factorsattribute.factorname)
+
+class StudentFactorsvalue2(models.Model):
+    factorsvalue = models.CharField(max_length=30, verbose_name='评价')
+
+    postgraduates = models.ForeignKey("Postgraduates", on_delete=models.CASCADE)
+    factorsattribute = models.ForeignKey(Sub2Factors, on_delete=models.CASCADE, verbose_name='所属因素')
+
+    class Meta:
+        db_table = 'myApp_StudentFactorsvalue2'  # 数据库名
+        verbose_name = '二级因素评分'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '二级因素评分'  # 修改管理级页面显示
+
+    def __str__(self):
+        return (self.factorsattribute.factorname)
 
 
-#专业实践因素
-class ProfessPracticeFactor(models.Model):
-    CONTENT = {("满意", "满意"),
-               ("一般", "一般"),
-               ("较差", "较差")}
-    PRACTICE = {("经常", "经常"),
-                ("偶尔", "偶尔"),
-                ("从来没有", "从来没有")}
-    SYSTEM = {("内容系统性较好","内容系统性较好"),
-              ("内容系统性一般","内容系统性一般"),
-              ("没有系统性","没有系统性")}
-    EFFECT = {("很好", "很好"),
-              ("一般", "一般"),
-              ("没有效果", "没有效果")}
+class StudentFactorsvalue3(models.Model):
+    factorsvalue = models.CharField(max_length=30, verbose_name='评价')
 
+    postgraduates = models.ForeignKey("Postgraduates", on_delete=models.CASCADE)
+    factorsattribute = models.ForeignKey(Sub3Factors, on_delete=models.CASCADE, verbose_name='所属因素')
 
-    PracticeBeginTime = models.CharField(max_length=50)
-    ContinueTime = models.CharField(max_length=50)
-    ActivityFrequency = models.CharField(max_length=10, choices=PRACTICE)
-    ActivityContent = models.CharField(max_length=10, choices=SYSTEM)
-    ActivitySatisfy = models.CharField(max_length=10, choices=CONTENT)
-    ActivityEffect = models.CharField(max_length=10, choices=EFFECT)
+    class Meta:
+        db_table = 'myApp_StudentFactorsvalue3'  # 数据库名
+        verbose_name = '三级因素评分'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '三级因素评分'  # 修改管理级页面显示
 
-    postgraduates = models.OneToOneField("Postgraduates", on_delete=models.CASCADE)
+    def __str__(self):
+        return (self.factorsattribute.factorname)
+
 # ////////////////////////////
 #专业实践能力
 
+class Alltarget(models.Model):
+    targetname = models.CharField(max_length=30, verbose_name='大指标名称')
 
-#适应能力
-class AdaptAbility(models.Model):
-    ExpressAbility = models.IntegerField()
-    RemberAbility = models.IntegerField()
-    InteractAbility = models.IntegerField()
-    Selflearning = models.IntegerField()
-    LogicAbility = models.IntegerField()
-    SystemMind = models.IntegerField()
-    ConcentrateAbility = models.IntegerField()
-    AdaptDiverse = models.IntegerField()
+    class Meta:
+        db_table = 'myApp_Alltarget'  # 数据库名
+        verbose_name = '大指标'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '综合大指标'  # 修改管理级页面显示
 
-    postgraduates = models.OneToOneField("Postgraduates", on_delete=models.CASCADE)
+    def __str__(self):
+        return self.targetname
 
-#创新能力
-class InnovateAbility(models.Model):
-    IndependMind = models.IntegerField()
-    ProblemFind = models.IntegerField()
-    PredictAbility = models.IntegerField()
-    KnowledgeMigrate = models.IntegerField()
-    MindExpand = models.IntegerField()
-    Remind = models.IntegerField()
-    React = models.IntegerField()
+class Subtarget(models.Model):
+    targetname = models.CharField(max_length=30, verbose_name='小指标名称')
 
-    postgraduates = models.OneToOneField("Postgraduates", on_delete=models.CASCADE)
+    alltarget = models.ForeignKey("Alltarget", on_delete=models.CASCADE, verbose_name='大指标名称')
 
-#工作能力
-class WorkAbility(models.Model):
-    InterpersonAbility = models.IntegerField()
-    ProblemReduce = models.IntegerField()
-    ProblemDeal = models.IntegerField()
-    KnowladgeChange = models.IntegerField()
-    TeamCooperation = models.IntegerField()
-    ExcuteAbility = models.IntegerField()
-    OrganizeAbility = models.IntegerField()
-    ExperienceTransform = models.IntegerField()
-    ProfessSkill = models.IntegerField()
-    PlanAbility  = models.IntegerField()
-    PressAbility = models.IntegerField()
-    BenefitCoordinate = models.IntegerField()
+    class Meta:
+        db_table = 'myApp_Subtarget'  # 数据库名
+        verbose_name = '小指标'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '综合小指标'  # 修改管理级页面显示
 
-    postgraduates = models.OneToOneField("Postgraduates", on_delete=models.CASCADE)
+    def __str__(self):
+        return self.targetname
 
-#其他综合能力
-class LogAbility(models.Model):
-    PreceptionAbility = models.IntegerField()
-    ObserveAbility = models.IntegerField()
-    AssessAbility = models.IntegerField()
-    EnterpriseAbility = models.IntegerField()
-    TheoryUnderstand = models.IntegerField()
-    MessageDeal = models.IntegerField()
-    PositiveEffect = models.IntegerField()
-    KnowladgeCombine = models.IntegerField()
+class StudentselfAccess(models.Model):
+    score = models.IntegerField(verbose_name='小指标分数', null=True)
 
-    postgraduates = models.OneToOneField("Postgraduates", on_delete=models.CASCADE)
-# ////////////////////////////
-
-#专家打分
-class ProfessScore(models.Model):
-    ExpressAbility = models.IntegerField()
-    RemberAbility = models.IntegerField()
-    InteractAbility = models.IntegerField()
-    Selflearning = models.IntegerField()
-    LogicAbility = models.IntegerField()
-    SystemMind = models.IntegerField()
-    ConcentrateAbility = models.IntegerField()
-    AdaptDiverse = models.IntegerField()
-
-    IndependMind = models.IntegerField()
-    ProblemFind = models.IntegerField()
-    PredictAbility = models.IntegerField()
-    KnowledgeMigrate = models.IntegerField()
-    MindExpand = models.IntegerField()
-    Remind = models.IntegerField()
-    React = models.IntegerField()
-
-    InterpersonAbility = models.IntegerField()
-    ProblemReduce = models.IntegerField()
-    ProblemDeal = models.IntegerField()
-    KnowladgeChange = models.IntegerField()
-    TeamCooperation = models.IntegerField()
-    ExcuteAbility = models.IntegerField()
-    OrganizeAbility = models.IntegerField()
-    ExperienceTransform = models.IntegerField()
-    ProfessSkill = models.IntegerField()
-    PlanAbility = models.IntegerField()
-    PressAbility = models.IntegerField()
-    BenefitCoordinate = models.IntegerField()
-
-    PreceptionAbility = models.IntegerField()
-    ObserveAbility = models.IntegerField()
-    AssessAbility = models.IntegerField()
-    EnterpriseAbility = models.IntegerField()
-    TheoryUnderstand = models.IntegerField()
-    MessageDeal = models.IntegerField()
-    PositiveEffect = models.IntegerField()
-    KnowladgeCombine = models.IntegerField()
-
+    targetname = models.ForeignKey("Subtarget",  verbose_name='所属小指标', on_delete=models.CASCADE)
     postgraduates = models.ForeignKey("Postgraduates", on_delete=models.CASCADE)
-    teacher = models.ForeignKey("Teachers", on_delete=models.CASCADE)
 
-# ////////////////////////////
+    class Meta:
+        db_table = 'myApp_StudentselfAccess'  # 数据库名
+        verbose_name = '学生自评分数'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '学生自评分数'  # 修改管理级页面显示
 
-#专家评价
-class ProfessAccess(models.Model):
-    ExpressAbility1 = models.IntegerField()
-    ExpressAbility2 = models.IntegerField()
-    RemberAbility1 = models.IntegerField()
-    RemberAbility2 = models.IntegerField()
-    InteractAbility1 = models.IntegerField()
-    InteractAbility2 = models.IntegerField()
-    Selflearning1 = models.IntegerField()
-    Selflearning2 = models.IntegerField()
-    LogicAbility1 = models.IntegerField()
-    LogicAbility2 = models.IntegerField()
-    SystemMind1 = models.IntegerField()
-    SystemMind2 = models.IntegerField()
-    ConcentrateAbility1 = models.IntegerField()
-    ConcentrateAbility2 = models.IntegerField()
-    AdaptDiverse1 = models.IntegerField()
-    AdaptDiverse2 = models.IntegerField()
+    def __str__(self):
+        return self.targetname.targetname
 
-    IndependMind1 = models.IntegerField()
-    IndependMind2 = models.IntegerField()
-    ProblemFind1 = models.IntegerField()
-    ProblemFind2 = models.IntegerField()
-    PredictAbility1 = models.IntegerField()
-    PredictAbility2 = models.IntegerField()
-    KnowledgeMigrate1 = models.IntegerField()
-    KnowledgeMigrate2 = models.IntegerField()
-    MindExpand1 = models.IntegerField()
-    MindExpand2 = models.IntegerField()
-    Remind1 = models.IntegerField()
-    Remind2 = models.IntegerField()
-    React1 = models.IntegerField()
-    React2 = models.IntegerField()
+class TeacherAccess(models.Model):
+    score1 = models.IntegerField(verbose_name='分数1', null=True)
+    score2 = models.IntegerField(verbose_name='分数2', null=True)
 
-    InterpersonAbility1 = models.IntegerField()
-    InterpersonAbility2 = models.IntegerField()
-    ProblemReduce1 = models.IntegerField()
-    ProblemReduce2 = models.IntegerField()
-    ProblemDeal1 = models.IntegerField()
-    ProblemDeal2 = models.IntegerField()
-    KnowladgeChange1 = models.IntegerField()
-    KnowladgeChange2 = models.IntegerField()
-    TeamCooperation1 = models.IntegerField()
-    TeamCooperation2 = models.IntegerField()
-    ExcuteAbility1 = models.IntegerField()
-    ExcuteAbility2 = models.IntegerField()
-    OrganizeAbility1 = models.IntegerField()
-    OrganizeAbility2 = models.IntegerField()
-    ExperienceTransform1 = models.IntegerField()
-    ExperienceTransform2 = models.IntegerField()
-    ProfessSkill1 = models.IntegerField()
-    ProfessSkill2 = models.IntegerField()
-    PlanAbility1 = models.IntegerField()
-    PlanAbility2 = models.IntegerField()
-    PressAbility1 = models.IntegerField()
-    PressAbility2 = models.IntegerField()
-    BenefitCoordinate1 = models.IntegerField()
-    BenefitCoordinate2 = models.IntegerField()
+    targetname = models.ForeignKey("Subtarget", on_delete=models.CASCADE, verbose_name='小指标')
+    teahcers = models.ForeignKey("Teachers", on_delete=models.CASCADE)
 
-    PreceptionAbility1 = models.IntegerField()
-    PreceptionAbility2 = models.IntegerField()
-    ObserveAbility1 = models.IntegerField()
-    ObserveAbility2 = models.IntegerField()
-    AssessAbility1 = models.IntegerField()
-    AssessAbility2 = models.IntegerField()
-    EnterpriseAbility1 = models.IntegerField()
-    EnterpriseAbility2 = models.IntegerField()
-    TheoryUnderstand1 = models.IntegerField()
-    TheoryUnderstand2 = models.IntegerField()
-    MessageDeal1 = models.IntegerField()
-    MessageDeal2 = models.IntegerField()
-    PositiveEffect1 = models.IntegerField()
-    PositiveEffect2 = models.IntegerField()
-    KnowladgeCombine1 = models.IntegerField()
-    KnowladgeCombine2 = models.IntegerField()
+    class Meta:
+        db_table = 'myApp_TeacherAccess'  # 数据库名
+        verbose_name = '教师评分'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '教师评分'  # 修改管理级页面显示
 
-    teacher = models.OneToOneField("Teachers", on_delete=models.CASCADE)
+    def __str__(self):
+        return self.targetname.targetname
+
+class TeachertoStudent(models.Model):
+    score = models.IntegerField(verbose_name='分数', null=True)
+
+    targetname = models.ForeignKey("Subtarget", on_delete=models.CASCADE, verbose_name='指标名称')
+    teahcers = models.ForeignKey("Teachers", on_delete=models.CASCADE, verbose_name='教师名称')
+    postgraduates = models.ForeignKey("Postgraduates", on_delete=models.CASCADE, verbose_name='学生名称')
+
+    class Meta:
+        db_table = 'myApp_TeachertoStudent'  # 数据库名
+        verbose_name = '教师对学生评分管理'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '教师对学生评分管理'  # 修改管理级页面显示
+
+    def __str__(self):
+        return self.teahcers.Tname + '-->' + self.postgraduates.Pname

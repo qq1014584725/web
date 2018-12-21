@@ -7,7 +7,7 @@ class UserForm(forms.Form):
     password1 = forms.CharField(label='密码', max_length=50, widget=forms.PasswordInput())
     password2 = forms.CharField(label='确认密码', max_length=50, widget=forms.PasswordInput())
     gender = forms.CharField(label='性别', max_length=1)
-    grade = forms.IntegerField(label='班级')
+    grade = forms.IntegerField(label='年级')
     degree = forms.CharField(label='学位', max_length=50)
     experience = forms.CharField(label='工作经历', max_length=50)
 

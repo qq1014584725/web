@@ -1,12 +1,26 @@
-*{
-            margin:100px;
-            padding:30px;/*设置距顶点的距离设置为3*/
-        }
-        .header{
-            height:80px;
-            width:100%;
-            font-size:50px;
-            font-family:"楷体";
-            text-align:center;
 
-        }
+*{
+    margin:1px;
+    padding:3px;/*设置距顶点的距离设置为3*/
+
+}
+.header1{
+    white-space: nowrap;
+    position:absolute;
+    top:30%;
+    width:95%;
+    font-size:50px;
+    font-family:"楷体";
+    text-align:center;
+
+}
+.header2{
+    white-space: nowrap;
+    position:absolute;
+    top:40%;
+    width:95%;
+    font-size:50px;
+    font-family:"楷体";
+    text-align:center;
+
+}

@@ -4,12 +4,16 @@ from django.contrib import sessions
 from django.contrib.auth.forms import UserCreationForm
 from .models import *
 from .forms import *
-
+from django.template.defaulttags import register
 # from pdfminer.pdfparser import PDFParser,PDFDocument
 # from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 # from pdfminer.converter import PDFPageAggregator
 # from pdfminer.layout import LAParams, LTTextBoxHorizontal
 
+#增加读取字典的函数
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
 
 # Create your views here.
 
@@ -99,6 +103,7 @@ def ProfessorEvaluate(Professor):
 #     return CONTENT
 
 ######################################################
+
 def index(request):
     return render(request, 'myApp/index.html')
 
@@ -263,64 +268,217 @@ def studentchange2(request):
 
 
 def studentassess(request):
-    message = ""
+    message = "无"
     if  request.session.get("username", None):
         username = request.session.get("username")
         user = Postgraduates.objects.get(Pid=username)
-        if request.method == 'POST':
-            userform = CultivateForm(request.POST)
-            if 'submit' in request.POST:
-                message = 'submit'
-                if userform.is_valid():
-                    try:
-                        message = "已提交信息请勿重复保存"
-                        self1 = CultivateFactors.objects.get(postgraduates=user)
-                    except:
-                        CULT = CultivateFactors()
-                        CULT.postgraduates = user
-                        CULT.CoursePractice = userform.cleaned_data['CoursePractice']
-                        CULT.E_IndustryDynamics = userform.cleaned_data['E_IndustryDynamics']
-                        CULT.E_PracticeCombine = userform.cleaned_data['E_PracticeCombine']
-                        CULT.E_UseingCase = userform.cleaned_data['E_UseingCase']
-                        CULT.E_DifferentActivity = userform.cleaned_data['E_DifferentActivity']
-                        CULT.E_UseingCase = userform.cleaned_data['E_UseingCase']
-                        CULT.F_IndustryDynamics = userform.cleaned_data['F_IndustryDynamics']
-                        CULT.F_PracticeCombine = userform.cleaned_data['F_PracticeCombine']
-                        CULT.F_UseingCase = userform.cleaned_data['F_UseingCase']
-                        CULT.F_DifferentActivity = userform.cleaned_data['F_DifferentActivity']
-                        CULT.F_TraditionClass = userform.cleaned_data['F_TraditionClass']
-                        CULT.F_CourseEffect = userform.cleaned_data['F_CourseEffect']
-                        CULT.I_TeacherDirect = userform.cleaned_data['I_TeacherDirect']
-                        CULT.O_TeacherDirect = userform.cleaned_data['O_TeacherDirect']
-                        CULT.I_TeacherAbility = userform.cleaned_data['I_TeacherAbility']
-                        CULT.O_TeacherAbility = userform.cleaned_data['O_TeacherAbility']
-                        CULT.ThesisCombinePractice = userform.cleaned_data['ThesisCombinePractice']
-                        CULT.save()
 
-                        PROFESS = ProfessPracticeFactor()
-                        PROFESS.postgraduates = user
-                        PROFESS.PracticeBeginTime = userform.cleaned_data['PracticeBeginTime']
-                        PROFESS.ContinueTime = userform.cleaned_data['ContinueTime']
-                        PROFESS.ActivityFrequency = userform.cleaned_data['ActivityFrequency']
-                        PROFESS.ActivityContent = userform.cleaned_data['ActivityContent']
-                        PROFESS.ActivitySatisfy = userform.cleaned_data['ActivitySatisfy']
-                        PROFESS.ActivityEffect = userform.cleaned_data['ActivityEffect']
-                        PROFESS.save()
+        AllFactors = Factors.objects.all()
+        Num = len(AllFactors)
 
-                        return redirect("myApp:studentuser")
+        store = []
+        rem = []
+        stack = []
+        for i in AllFactors:
+            stack.append(i)
+            rem.append(i)
 
-            elif 'back' in request.POST:
-                message = ""
+            if Sub1Factors().__class__.objects.filter(factors=i):
+                for j in Sub1Factors().__class__.objects.filter(factors=i):
+                    stack.append(j)
+                    rem.append(j)
 
+                    if Sub2Factors().__class__.objects.filter(factors=j):
+                        for k in Sub2Factors().__class__.objects.filter(factors=j):
+                            stack.append(k)
+                            rem.append(k)
+
+                            if Sub3Factors().__class__.objects.filter(factors=k):
+                                for l in Sub3Factors().__class__.objects.filter(factors=k):
+                                    stack.append(l)
+                                    rem.append(l)
+                                    store.append(rem)
+                                    rem = []
+                                    stack.pop(-1)
+                            else:
+                                store.append(rem)
+                                rem = []
+                                stack.pop(-1)
+                    else:
+                        store.append(rem)
+                        rem = []
+
+                    stack.pop(-1)
             else:
-                try :
-                    CULT = CultivateFactors().__class__.objects.get(postgraduates=user)
-                    PROFESS = ProfessPracticeFactor().__class__.objects.get(postgraduates=user)
-                    message = "see"
-                except:
-                    message = "还未保存过"
+                store.append(rem)
+                rem = []
 
-        login_form = CultivateForm()
+            stack.pop(-1)
+
+        #将个因素的纵向跨度用字典存储
+        row = {}
+        for i in Sub3Factors.objects.all():
+            row[i.factorname] = 1
+
+        for i in Sub2Factors.objects.all():
+            if Sub3Factors().__class__.objects.filter(factors=i):
+                number = 0
+            else:
+                number = 1
+            for j in Sub3Factors().__class__.objects.filter(factors=i):
+                number += 1
+            row[i.factorname] = number
+
+
+        for i in Sub1Factors.objects.all():
+            if Sub2Factors().__class__.objects.filter(factors=i):
+                number = 0
+            else:
+                number = 1
+            for j in Sub2Factors().__class__.objects.filter(factors=i):
+                number = number + row[j.factorname]
+            row[i.factorname] = number
+
+        for i in Factors.objects.all():
+            if Sub1Factors().__class__.objects.filter(factors=i):
+                number = 0
+            else:
+                number = 1
+            for j in Sub1Factors().__class__.objects.filter(factors=i):
+                number = number + row[j.factorname]
+            row[i.factorname] = number
+
+        #将因素的横向跨度存入字典
+        col = {}
+        for i in store:
+            a = str(i[-1])
+
+            if a[0] == '1':
+                col[i[-1].factorname] = 3
+            elif a[0] == '2':
+                col[i[-1].factorname] = 2
+            elif a[0] == '3':
+                col[i[-1].factorname] = 1
+            else:
+                col[i[-1].factorname] = 4
+
+            for j in i[0:-1]:
+                col[j.factorname] = 1
+
+        #已经填写读取填好了的值
+        content = []
+        for i in store:
+            a = str(i[-1])
+
+            if a[0] == '1':
+                try:
+                    content.append(StudentFactorsvalue1().__class__.objects.get(factorsattribute=i[-1], postgraduates=user).factorsvalue)
+                except:
+                    content.append('')
+            elif a[0] == '2':
+                try:
+                    content.append(StudentFactorsvalue2().__class__.objects.get(factorsattribute=i[-1], postgraduates=user).factorsvalue)
+                except:
+                    content.append('')
+            elif a[0] == '3':
+                try:
+                    content.append(StudentFactorsvalue3().__class__.objects.get(factorsattribute=i[-1], postgraduates=user).factorsvalue)
+                except:
+                    content.append('')
+
+        for i in content:
+            if i :
+                message = '有'
+                update = list(zip(store,content))
+                break
+
+        # 读取最末尾有值数据的object
+        end = []
+        for i in store:
+            j = str(i[-1].value)
+
+            if  '，' in j:
+                j = j.split('，')
+            else:
+                j = j.split(',')
+
+            end.append(j)
+
+        name = []
+        for i in store:
+            name.append(i[-1].factorname)
+
+        new = list(zip(store,end,name))
+
+        #POST请求
+        if request.method == 'POST':
+            if 'submit' in request.POST:
+                for item in Sub1Factors.objects.filter(isvalue=True):
+                    score = StudentFactorsvalue1()
+                    score.factorsattribute = item
+                    score.postgraduates = user
+                    score.factorsvalue = request.POST.get(item.factorname)
+                    score.save()
+
+                for item in Sub2Factors.objects.filter(isvalue=True):
+                    score = StudentFactorsvalue2()
+                    score.factorsattribute = item
+                    score.postgraduates = user
+                    score.factorsvalue = request.POST.get(item.factorname)
+                    score.save()
+
+                for item in Sub3Factors.objects.filter(isvalue=True):
+                    score = StudentFactorsvalue3()
+                    score.factorsattribute = item
+                    score.postgraduates = user
+                    score.factorsvalue = request.POST.get(item.factorname)
+                    score.save()
+
+                return redirect("myApp:studentuser")
+
+            elif 'save' in request.POST:
+                for item in Sub1Factors.objects.filter(isvalue=True):
+                    try:
+                        score = StudentFactorsvalue1().__class__.objects.get(factorsattribute=item, postgraduates=user)
+                        score.factorsvalue = request.POST.get(item.factorname)
+                        score.save()
+                    except:
+                        score = StudentFactorsvalue1()
+                        score.factorsattribute = item
+                        score.postgraduates = user
+                        score.factorsvalue = request.POST.get(item.factorname)
+                        score.save()
+
+                for item in Sub2Factors.objects.filter(isvalue=True):
+                    try:
+                        score = StudentFactorsvalue2().__class__.objects.get(factorsattribute=item, postgraduates=user)
+                        score.factorsvalue = request.POST.get(item.factorname)
+                        score.save()
+                    except:
+                        score = StudentFactorsvalue2()
+                        score.factorsattribute = item
+                        score.postgraduates = user
+                        score.factorsvalue = request.POST.get(item.factorname)
+                        score.save()
+
+                for item in Sub3Factors.objects.filter(isvalue=True):
+                    try:
+                        score = StudentFactorsvalue3().__class__.objects.get(factorsattribute=item, postgraduates=user)
+                        score.factorsvalue = request.POST.get(item.factorname)
+                        score.save()
+                    except:
+                        score = StudentFactorsvalue3()
+                        score.factorsattribute = item
+                        score.postgraduates = user
+                        score.factorsvalue = request.POST.get(item.factorname)
+                        score.save()
+
+                return redirect("myApp:studentuser")
+
+            elif 'exchange' in request.POST:
+                message = '改'
+                greet = list(zip(store, end, name, content))
+
         return render(request, 'myApp/studentassess.html', locals())
     else:
         return redirect("myApp:student")
@@ -330,82 +488,79 @@ def studentselfestimate(request):
     if  request.session.get("username", None):
         username = request.session.get("username")
         user = Postgraduates.objects.get(Pid=username)
-        if request.method == 'POST':
-            userform = SelfForm_(request.POST)
-            if 'submit' in request.POST:
-                message = 'submit'
-                if userform.is_valid():
-                    try:
-                        self1 = AdaptAbility.objects.get(postgraduates=user)
-                        message = "已提交信息请勿重复保存"
-                    except:
-                        self1 = AdaptAbility()
-                        self1.postgraduates = user
-                        self1.ExpressAbility = userform.cleaned_data['ExpressAbility']
-                        self1.RemberAbility = userform.cleaned_data['RemberAbility']
-                        self1.InteractAbility = userform.cleaned_data['InteractAbility']
-                        self1.Selflearning = userform.cleaned_data['Selflearning']
-                        self1.LogicAbility = userform.cleaned_data['LogicAbility']
-                        self1.SystemMind = userform.cleaned_data['SystemMind']
-                        self1.ConcentrateAbility = userform.cleaned_data['ConcentrateAbility']
-                        self1.AdaptDiverse = userform.cleaned_data['AdaptDiverse']
-                        self1.save()
 
-                        self2 = InnovateAbility()
-                        self2.postgraduates = user
-                        self2.IndependMind = userform.cleaned_data['IndependMind']
-                        self2.ProblemFind = userform.cleaned_data['ProblemFind']
-                        self2.PredictAbility = userform.cleaned_data['PredictAbility']
-                        self2.KnowledgeMigrate = userform.cleaned_data['KnowledgeMigrate']
-                        self2.MindExpand = userform.cleaned_data['MindExpand']
-                        self2.Remind = userform.cleaned_data['Remind']
-                        self2.React = userform.cleaned_data['React']
-                        self2.save()
+        zongzhibiao = Alltarget.objects.all()
 
-                        self3 = WorkAbility()
-                        self3.postgraduates = user
-                        self3.InterpersonAbility = userform.cleaned_data['InterpersonAbility']
-                        self3.ProblemReduce = userform.cleaned_data['ProblemReduce']
-                        self3.ProblemDeal = userform.cleaned_data['ProblemDeal']
-                        self3.KnowladgeChange = userform.cleaned_data['KnowladgeChange']
-                        self3.TeamCooperation = userform.cleaned_data['TeamCooperation']
-                        self3.ExcuteAbility = userform.cleaned_data['ExcuteAbility']
-                        self3.OrganizeAbility = userform.cleaned_data['OrganizeAbility']
-                        self3.ExperienceTransform = userform.cleaned_data['ExperienceTransform']
-                        self3.ProfessSkill = userform.cleaned_data['ProfessSkill']
-                        self3.PlanAbility = userform.cleaned_data['PlanAbility']
-                        self3.PressAbility = userform.cleaned_data['PressAbility']
-                        self3.BenefitCoordinate = userform.cleaned_data['BenefitCoordinate']
-                        self3.save()
+        #计算有几个大指标和所属小指标的个数
+        Num = 0
+        hang = []
+        for l in zongzhibiao:
+            cishu = 0
+            for n in Subtarget().__class__.objects.filter(alltarget=l):
+                cishu += 1
+            hang.append(cishu)
+            Num += 1
 
-                        self4 = LogAbility()
-                        self4.postgraduates = user
-                        self4.PreceptionAbility = userform.cleaned_data['PreceptionAbility']
-                        self4.ObserveAbility = userform.cleaned_data['ObserveAbility']
-                        self4.AssessAbility = userform.cleaned_data['AssessAbility']
-                        self4.EnterpriseAbility = userform.cleaned_data['EnterpriseAbility']
-                        self4.TheoryUnderstand = userform.cleaned_data['TheoryUnderstand']
-                        self4.MessageDeal = userform.cleaned_data['MessageDeal']
-                        self4.PositiveEffect = userform.cleaned_data['PositiveEffect']
-                        self4.KnowladgeCombine = userform.cleaned_data['KnowladgeCombine']
-                        self4.save()
+        #将小指标按大指标索引存入2阶list中并整合大指标和小指标
+        zhibiao = []
+        for i in range(Num):
+            zhibiao.append((zongzhibiao[i], Subtarget().__class__.objects.filter(alltarget=zongzhibiao[i]), hang[i]))
 
-                        return redirect("myApp:studentuser")
-
-            elif 'back' in request.POST:
-                message = ""
-
-            else:
+        xianshifen = []
+        for i in range(Num):
+            zuhe = []
+            for j in Subtarget().__class__.objects.filter(alltarget=zongzhibiao[i]):
                 try:
-                    message = "see"
-                    self1 = AdaptAbility().__class__.objects.get(postgraduates=user)
-                    self2 = InnovateAbility().__class__.objects.get(postgraduates=user)
-                    self3 = WorkAbility().__class__.objects.get(postgraduates=user)
-                    self4 = LogAbility().__class__.objects.get(postgraduates=user)
+                    zuhe.append((j, StudentselfAccess().__class__.objects.get(targetname=j, postgraduates=user)))
                 except:
-                    message = "还未保存过"
+                    zuhe.append((j, 0))
 
-        login_form = SelfForm_()
+            xianshifen.append((zongzhibiao[i], zuhe, hang[i]))
+
+            message = '无'
+            for i, j, k in xianshifen:
+                for z, fen in j:
+                    if fen != 0:
+                        message = '有'
+                        break
+
+                if message == '有':
+                    break
+
+        if request.method == 'POST':
+            if 'submit' in request.POST:
+                for item in Subtarget.objects.all():
+                    score = StudentselfAccess()
+                    score.postgraduates = user
+                    score.targetname = item
+                    score.score = request.POST.get(item.targetname)
+                    score.save()
+
+                return redirect("myApp:studentuser")
+
+            elif 'save' in request.POST:
+                for item in Subtarget.objects.all():
+                    try:
+                        score = StudentselfAccess().__class__.objects.get(targetname=item, postgraduates=user)
+                        score.score = request.POST.get(item.targetname)
+                        score.save()
+                    except:
+                        score = StudentselfAccess()
+                        score.postgraduates = user
+                        score.targetname = item
+                        if request.POST.get(item.targetname):
+                            score.score = request.POST.get(item.targetname)
+                            score.save()
+                        else:
+                            pass
+
+                return redirect("myApp:studentuser")
+
+
+            elif 'exchange' in request.POST:
+                message = '改'
+
+
         return render(request, "myApp/studentselfestimate.html", locals())
     else:
         return redirect("myApp:student")
@@ -449,68 +604,46 @@ def teacheruser(request):
                 return render(request, 'myApp/teacheruser.html', locals())
 
         else:
+            all_zhibiao = []
+            for i in Subtarget.objects.all():
+                all_zhibiao.append(i)
+            professor = []
+            for i in Teachers.objects.all():
+                professor.append(i)
+
+            Nomalization = []
+            Ensure = []
+            Inital = []
+            Judge = []
+
             try:
-                professorscore1 = ProfessAccess.objects.get(id=1)
-                professorscore2 = ProfessAccess.objects.get(id=2)
-                professorscore3 = ProfessAccess.objects.get(id=3)
-                professorscore4 = ProfessAccess.objects.get(id=4)
-                professorscore5 = ProfessAccess.objects.get(id=5)
-
-                professor1 = Teachers.objects.get(id=1)
-                professor2 = Teachers.objects.get(id=2)
-                professor3 = Teachers.objects.get(id=3)
-                professor4 = Teachers.objects.get(id=4)
-                professor5 = Teachers.objects.get(id=5)
-
-                allhost = ProfessAccess._meta.get_fields()
-                value1 = []
-                value2 = []
-                value3 = []
-                value4 = []
-                value5 = []
-
-                for i in allhost[:-1]:
-                    value1.append(getattr(professorscore1, i.name))
-                    value2.append(getattr(professorscore2, i.name))
-                    value3.append(getattr(professorscore3, i.name))
-                    value4.append(getattr(professorscore4, i.name))
-                    value5.append(getattr(professorscore5, i.name))
-                #保存方式为3层 第一层为每个教授 第二层第一维为分，第二维为权重， 第三层是各个分数
-                value = [[value1, professor1.Tweight], [value2, professor2.Tweight], [value3, professor3.Tweight], [value4, professor4.Tweight], [value5, professor5.Tweight]]
-                #计算值是否保留
-                Nomalization = []
-                Ensure = []
-                for item in range(1, 36):
-                    professor = []
-                    for j in value:
-                        professor.append([j[0][item*2-1], j[0][item*2], j[1]])
-                    Nomalization.append(round(ProfessorEvaluate(professor)[0], 2))
-                    Ensure.append(round(ProfessorEvaluate(professor)[1], 2))
+                for i in all_zhibiao:
+                    score = []
+                    for j in professor:
+                        score.append([j.Tweight, TeacherAccess().__class__.objects.get(targetname=i, teahcers=j).score1, TeacherAccess().__class__.objects.get(targetname=i, teahcers=j).score2])
+                    Nomalization.append(round(ProfessorEvaluate(score)[0], 2))
+                    Ensure.append(round(ProfessorEvaluate(score)[1], 2))
 
                 High = max(Nomalization)
                 Low = min(Nomalization)
 
-                Inital = []
                 for i in Nomalization:
-                    Inital.append(round((i-Low)/(High-Low), 2))
+                    Inital.append(round((i - Low) / (High - Low), 2))
 
-                Judge = []
                 for i in Inital:
                     if i <= 0.3:
                         Judge.append('删除')
                     else:
                         Judge.append('保留')
 
-                Accurcy = 0
-                for item in range(1, 36):
-                    Accurcy = Accurcy + (0.1 * (Nomalization[item] * Ensure[item])) / 35
-
             except:
                 message = '还有老师没评价'
 
-            AllUser = []
-            for j in Postgraduates.objects.filter(Pgrade=1):
-                AllUser.append(j)
+            Accurcy = 0
+            for item in range(len(Nomalization)):
+                Accurcy = Accurcy + (0.1 * (Nomalization[item] * Ensure[item])) / len(Nomalization)
+
+            jieguo = zip(all_zhibiao, Nomalization, Inital, Judge)
 
         return render(request, 'myApp/teacheruser.html', locals())
 
@@ -523,23 +656,181 @@ def popwindow(request, num):
         username = request.session.get("username")
         user = Teachers.objects.get(Tid=username)
         if num[-1] == '1':
-            try:
-                student = Postgraduates().__class__.objects.get(id=num[0:-1])
-                CULT = CultivateFactors().__class__.objects.get(postgraduates=student)
-                PROFESS = ProfessPracticeFactor().__class__.objects.get(postgraduates=student)
-            except:
-                message = "学生还未填写"
+            student = Postgraduates.objects.get(id=num[0:-1])
+            message = '无'
+            AllFactors = Factors.objects.all()
+            Num = len(AllFactors)
+
+            store = []
+            rem = []
+            stack = []
+            for i in AllFactors:
+                stack.append(i)
+                rem.append(i)
+
+                if Sub1Factors().__class__.objects.filter(factors=i):
+                    for j in Sub1Factors().__class__.objects.filter(factors=i):
+                        stack.append(j)
+                        rem.append(j)
+
+                        if Sub2Factors().__class__.objects.filter(factors=j):
+                            for k in Sub2Factors().__class__.objects.filter(factors=j):
+                                stack.append(k)
+                                rem.append(k)
+
+                                if Sub3Factors().__class__.objects.filter(factors=k):
+                                    for l in Sub3Factors().__class__.objects.filter(factors=k):
+                                        stack.append(l)
+                                        rem.append(l)
+                                        store.append(rem)
+                                        rem = []
+                                        stack.pop(-1)
+                                else:
+                                    store.append(rem)
+                                    rem = []
+                                    stack.pop(-1)
+                        else:
+                            store.append(rem)
+                            rem = []
+
+                        stack.pop(-1)
+                else:
+                    store.append(rem)
+                    rem = []
+
+                stack.pop(-1)
+
+            # 将个因素的纵向跨度用字典存储
+            count = {}
+            for i in Sub3Factors.objects.all():
+                count[i.factorname] = 1
+
+            for i in Sub2Factors.objects.all():
+                if Sub3Factors().__class__.objects.filter(factors=i):
+                    number = 0
+                else:
+                    number = 1
+                for j in Sub3Factors().__class__.objects.filter(factors=i):
+                    number += 1
+                count[i.factorname] = number
+
+            for i in Sub1Factors.objects.all():
+                if Sub2Factors().__class__.objects.filter(factors=i):
+                    number = 0
+                else:
+                    number = 1
+                for j in Sub2Factors().__class__.objects.filter(factors=i):
+                    number = number + count[j.factorname]
+                count[i.factorname] = number
+
+            for i in Factors.objects.all():
+                if Sub1Factors().__class__.objects.filter(factors=i):
+                    number = 0
+                else:
+                    number = 1
+                for j in Sub1Factors().__class__.objects.filter(factors=i):
+                    number = number + count[j.factorname]
+                count[i.factorname] = number
+
+            # 将因素的横向跨度存入字典
+            col = {}
+            for i in store:
+                a = str(i[-1])
+
+                if a[0] == '1':
+                    col[i[-1].factorname] = 3
+                elif a[0] == '2':
+                    col[i[-1].factorname] = 2
+                elif a[0] == '3':
+                    col[i[-1].factorname] = 1
+                else:
+                    col[i[-1].factorname] = 4
+
+                for j in i[0:-1]:
+                    col[j.factorname] = 1
+
+            content = []
+            for i in store:
+                a = str(i[-1])
+
+                if a[0] == '1':
+                    try:
+                        content.append(StudentFactorsvalue1().__class__.objects.get(factorsattribute=i[-1], postgraduates=student))
+                    except:
+                        content.append([])
+                elif a[0] == '2':
+                    try:
+                        content.append(StudentFactorsvalue2().__class__.objects.get(factorsattribute=i[-1], postgraduates=student))
+                    except:
+                        content.append([])
+                elif a[0] == '3':
+                    try:
+                        content.append(StudentFactorsvalue3().__class__.objects.get(factorsattribute=i[-1], postgraduates=student))
+                    except:
+                        content.append([])
+
+            update = list(zip(store, content))
+            for i in content:
+                if i:
+                    message = '有'
+                    break
+
+            # 读取最末尾有值数据的object
+            end = []
+            for i in store:
+                j = str(i[-1].value)
+
+                if '，' in j:
+                    j = j.split('，')
+                else:
+                    j = j.split(',')
+
+                end.append(j)
+
             return render(request, 'myApp/popwindow1.html', locals())
 
         elif num[-1] == '2':
-            try:
-                student = Postgraduates().__class__.objects.get(id=num[0:-1])
-                self1 = AdaptAbility().__class__.objects.get(postgraduates=student)
-                self2 = InnovateAbility().__class__.objects.get(postgraduates=student)
-                self3 = WorkAbility().__class__.objects.get(postgraduates=student)
-                self4 = LogAbility().__class__.objects.get(postgraduates=student)
-            except:
-                message = "学生还未填写"
+            message = '无'
+            student = Postgraduates.objects.get(id=num[0:-1])
+            zongzhibiao = Alltarget.objects.all()
+            # 计算有几个大指标和所属小指标的个数
+            Num = 0
+            hang = []
+            for l in zongzhibiao:
+                cishu = 0
+                for n in Subtarget().__class__.objects.filter(alltarget=l):
+                    cishu += 1
+                hang.append(cishu)
+                Num += 1
+
+            # 将小指标按大指标索引存入2阶list中并整合大指标和小指标
+            zhibiao = []
+            for i in range(Num):
+                zhibiao.append((zongzhibiao[i],Subtarget().__class__.objects.filter(alltarget=zongzhibiao[i]),hang[i]))
+
+            xianshifen = []
+            for i in range(Num):
+                zuhe = []
+                for j in Subtarget().__class__.objects.filter(alltarget=zongzhibiao[i]):
+                    try:
+                        zuhe.append(
+                            (j, StudentselfAccess().__class__.objects.get(targetname=j, postgraduates=student)))
+                    except:
+                        zuhe.append((j, 0))
+
+                xianshifen.append((zongzhibiao[i], zuhe, hang[i]))
+
+            message = '无'
+            for i, j, k in xianshifen:
+                for z, fen in j:
+                    if fen != 0:
+                        message = '有'
+                        break
+
+                if message == '有':
+                    break
+
+
             return render(request, 'myApp/popwindow2.html', locals())
 
         elif num[-1] == '3':
@@ -562,176 +853,160 @@ def popwindow(request, num):
 
         elif num[-1] == '5':
             student = Postgraduates.objects.get(id=num[0:-1])
-            if request.method == 'POST':
-                userform = SelfForm_(request.POST)
-                if 'submit' in request.POST:
-                    message = '保存成功'
-                    if userform.is_valid():
-                        try:
-                            self = ProfessScore().__class__.objects.get(postgraduates=student, teacher=user)
-                            message = "已提交信息请勿重复保存"
-                        except:
-                            self = ProfessScore()
-                            self.postgraduates = student
-                            self.teacher = user
-                            self.ExpressAbility = userform.cleaned_data['ExpressAbility']
-                            self.RemberAbility = userform.cleaned_data['RemberAbility']
-                            self.InteractAbility = userform.cleaned_data['InteractAbility']
-                            self.Selflearning = userform.cleaned_data['Selflearning']
-                            self.LogicAbility = userform.cleaned_data['LogicAbility']
-                            self.SystemMind = userform.cleaned_data['SystemMind']
-                            self.ConcentrateAbility = userform.cleaned_data['ConcentrateAbility']
-                            self.AdaptDiverse = userform.cleaned_data['AdaptDiverse']
-                            self.IndependMind = userform.cleaned_data['IndependMind']
-                            self.ProblemFind = userform.cleaned_data['ProblemFind']
-                            self.PredictAbility = userform.cleaned_data['PredictAbility']
-                            self.KnowledgeMigrate = userform.cleaned_data['KnowledgeMigrate']
-                            self.MindExpand = userform.cleaned_data['MindExpand']
-                            self.Remind = userform.cleaned_data['Remind']
-                            self.React = userform.cleaned_data['React']
-                            self.InterpersonAbility = userform.cleaned_data['InterpersonAbility']
-                            self.ProblemReduce = userform.cleaned_data['ProblemReduce']
-                            self.ProblemDeal = userform.cleaned_data['ProblemDeal']
-                            self.KnowladgeChange = userform.cleaned_data['KnowladgeChange']
-                            self.TeamCooperation = userform.cleaned_data['TeamCooperation']
-                            self.ExcuteAbility = userform.cleaned_data['ExcuteAbility']
-                            self.OrganizeAbility = userform.cleaned_data['OrganizeAbility']
-                            self.ExperienceTransform = userform.cleaned_data['ExperienceTransform']
-                            self.ProfessSkill = userform.cleaned_data['ProfessSkill']
-                            self.PlanAbility = userform.cleaned_data['PlanAbility']
-                            self.PressAbility = userform.cleaned_data['PressAbility']
-                            self.BenefitCoordinate = userform.cleaned_data['BenefitCoordinate']
-                            self.PreceptionAbility = userform.cleaned_data['PreceptionAbility']
-                            self.ObserveAbility = userform.cleaned_data['ObserveAbility']
-                            self.AssessAbility = userform.cleaned_data['AssessAbility']
-                            self.EnterpriseAbility = userform.cleaned_data['EnterpriseAbility']
-                            self.TheoryUnderstand = userform.cleaned_data['TheoryUnderstand']
-                            self.MessageDeal = userform.cleaned_data['MessageDeal']
-                            self.PositiveEffect = userform.cleaned_data['PositiveEffect']
-                            self.KnowladgeCombine = userform.cleaned_data['KnowladgeCombine']
-                            self.save()
+            zongzhibiao = Alltarget.objects.all()
+            # 计算有几个大指标和所属小指标的个数
+            Num = 0
+            hang = []
+            for l in zongzhibiao:
+                cishu = 0
+                for n in Subtarget().__class__.objects.filter(alltarget=l):
+                    cishu += 1
+                hang.append(cishu)
+                Num += 1
 
-                            return render(request, 'myApp/popwindow5.html', locals())
+            # 将小指标按大指标索引存入2阶list中并整合大指标和小指标
+            zhibiao = []
+            for i in range(Num):
+                zhibiao.append((zongzhibiao[i],
+                                Subtarget().__class__.objects.filter(alltarget=zongzhibiao[i]),
+                                hang[i]))
 
-                elif 'back' in request.POST:
-                    message = ""
-
-                else:
+            xianshifen = []
+            for i in range(Num):
+                zuhe = []
+                for j in Subtarget().__class__.objects.filter(alltarget=zongzhibiao[i]):
                     try:
-                        message = "see"
-                        self = ProfessScore().__class__.objects.get(teacher=user, postgraduates=student)
+                        zuhe.append((j, TeachertoStudent().__class__.objects.get(targetname=j, teahcers=user, postgraduates=student)))
                     except:
-                        message = "还未保存过"
+                        zuhe.append((j, 0))
 
-            login_form = SelfForm_()
+                xianshifen.append((zongzhibiao[i], zuhe, hang[i]))
+
+            message = '无'
+            for i,j,k in xianshifen:
+                for z,fen in j:
+                    if fen != 0:
+                        message = '有'
+                        break
+
+                if message == '有':
+                    break
+
+            if request.method == 'POST':
+                if 'submit' in request.POST:
+                    for item in Subtarget.objects.all():
+                        score = TeachertoStudent()
+                        score.teahcers = user
+                        score.postgraduates = student
+                        score.targetname = item
+                        score.score = request.POST.get(item.targetname)
+                        score.save()
+
+                    return redirect(('/teacher/user/%d')% int(num))
+
+                elif 'save' in request.POST:
+                    for item in Subtarget.objects.all():
+                        try:
+                            score = TeachertoStudent().__class__.objects.get(targetname=item, teahcers=user, postgraduates=student)
+                            score.score = request.POST.get(item.targetname)
+                            score.save()
+                        except:
+                            score = TeachertoStudent()
+                            score.teahcers = user
+                            score.postgraduates = student
+                            score.targetname = item
+                            if request.POST.get(item.targetname):
+                                score.score = request.POST.get(item.targetname)
+                                score.save()
+                            else:
+                                pass
+
+                    return redirect(('/teacher/user/%d') % int(num))
+
+
+                elif 'exchange' in request.POST:
+                    message = '改'
+
             return render(request, 'myApp/popwindow5.html', locals())
 
         elif num[-1] == '6':
-            if request.method == 'POST':
-                userform = SelfForm(request.POST)
-                if 'submit' in request.POST:
-                    message = '保存成功'
-                    if userform.is_valid():
-                        try:
-                            self = ProfessAccess().__class__.objects.get(teacher=user)
-                            message = "已提交信息请勿重复保存"
-                        except:
-                            self = ProfessAccess()
-                            self.teacher = user
-                            self.ExpressAbility1 = userform.cleaned_data['ExpressAbility1']
-                            self.RemberAbility1 = userform.cleaned_data['RemberAbility1']
-                            self.InteractAbility1 = userform.cleaned_data['InteractAbility1']
-                            self.Selflearning1 = userform.cleaned_data['Selflearning1']
-                            self.LogicAbility1 = userform.cleaned_data['LogicAbility1']
-                            self.SystemMind1 = userform.cleaned_data['SystemMind1']
-                            self.ConcentrateAbility1 = userform.cleaned_data['ConcentrateAbility1']
-                            self.AdaptDiverse1 = userform.cleaned_data['AdaptDiverse1']
-                            self.IndependMind1 = userform.cleaned_data['IndependMind1']
-                            self.ProblemFind1 = userform.cleaned_data['ProblemFind1']
-                            self.PredictAbility1 = userform.cleaned_data['PredictAbility1']
-                            self.KnowledgeMigrate1 = userform.cleaned_data['KnowledgeMigrate1']
-                            self.MindExpand1 = userform.cleaned_data['MindExpand1']
-                            self.Remind1 = userform.cleaned_data['Remind1']
-                            self.React1 = userform.cleaned_data['React1']
-                            self.InterpersonAbility1 = userform.cleaned_data['InterpersonAbility1']
-                            self.ProblemReduce1 = userform.cleaned_data['ProblemReduce1']
-                            self.ProblemDeal1 = userform.cleaned_data['ProblemDeal1']
-                            self.KnowladgeChange1 = userform.cleaned_data['KnowladgeChange1']
-                            self.TeamCooperation1 = userform.cleaned_data['TeamCooperation1']
-                            self.ExcuteAbility1 = userform.cleaned_data['ExcuteAbility1']
-                            self.OrganizeAbility1 = userform.cleaned_data['OrganizeAbility1']
-                            self.ExperienceTransform1 = userform.cleaned_data['ExperienceTransform1']
-                            self.ProfessSkill1 = userform.cleaned_data['ProfessSkill1']
-                            self.PlanAbility1 = userform.cleaned_data['PlanAbility1']
-                            self.PressAbility1 = userform.cleaned_data['PressAbility1']
-                            self.BenefitCoordinate1 = userform.cleaned_data['BenefitCoordinate1']
-                            self.PreceptionAbility1 = userform.cleaned_data['PreceptionAbility1']
-                            self.ObserveAbility1 = userform.cleaned_data['ObserveAbility1']
-                            self.AssessAbility1 = userform.cleaned_data['AssessAbility1']
-                            self.EnterpriseAbility1 = userform.cleaned_data['EnterpriseAbility1']
-                            self.TheoryUnderstand1 = userform.cleaned_data['TheoryUnderstand1']
-                            self.MessageDeal1 = userform.cleaned_data['MessageDeal1']
-                            self.PositiveEffect1 = userform.cleaned_data['PositiveEffect1']
-                            self.KnowladgeCombine1 = userform.cleaned_data['KnowladgeCombine1']
+            zongzhibiao = Alltarget.objects.all()
+            # 计算有几个大指标和所属小指标的个数
+            Num = 0
+            hang = []
+            for l in zongzhibiao:
+                cishu = 0
+                for n in Subtarget().__class__.objects.filter(alltarget=l):
+                    cishu += 1
+                hang.append(cishu)
+                Num += 1
 
-                            self.ExpressAbility2 = userform.cleaned_data['ExpressAbility2']
-                            self.RemberAbility2 = userform.cleaned_data['RemberAbility2']
-                            self.InteractAbility2 = userform.cleaned_data['InteractAbility2']
-                            self.Selflearning2 = userform.cleaned_data['Selflearning2']
-                            self.LogicAbility2 = userform.cleaned_data['LogicAbility2']
-                            self.SystemMind2 = userform.cleaned_data['SystemMind2']
-                            self.ConcentrateAbility2 = userform.cleaned_data['ConcentrateAbility2']
-                            self.AdaptDiverse2 = userform.cleaned_data['AdaptDiverse2']
-                            self.IndependMind2 = userform.cleaned_data['IndependMind2']
-                            self.ProblemFind2 = userform.cleaned_data['ProblemFind2']
-                            self.PredictAbility2 = userform.cleaned_data['PredictAbility2']
-                            self.KnowledgeMigrate2 = userform.cleaned_data['KnowledgeMigrate2']
-                            self.MindExpand2 = userform.cleaned_data['MindExpand2']
-                            self.Remind2 = userform.cleaned_data['Remind2']
-                            self.React2 = userform.cleaned_data['React2']
-                            self.InterpersonAbility2 = userform.cleaned_data['InterpersonAbility2']
-                            self.ProblemReduce2 = userform.cleaned_data['ProblemReduce2']
-                            self.ProblemDeal2 = userform.cleaned_data['ProblemDeal2']
-                            self.KnowladgeChange2 = userform.cleaned_data['KnowladgeChange2']
-                            self.TeamCooperation2 = userform.cleaned_data['TeamCooperation2']
-                            self.ExcuteAbility2 = userform.cleaned_data['ExcuteAbility2']
-                            self.OrganizeAbility2 = userform.cleaned_data['OrganizeAbility2']
-                            self.ExperienceTransform2 = userform.cleaned_data['ExperienceTransform2']
-                            self.ProfessSkill2 = userform.cleaned_data['ProfessSkill2']
-                            self.PlanAbility2 = userform.cleaned_data['PlanAbility2']
-                            self.PressAbility2 = userform.cleaned_data['PressAbility2']
-                            self.BenefitCoordinate2 = userform.cleaned_data['BenefitCoordinate2']
-                            self.PreceptionAbility2 = userform.cleaned_data['PreceptionAbility2']
-                            self.ObserveAbility2 = userform.cleaned_data['ObserveAbility2']
-                            self.AssessAbility2 = userform.cleaned_data['AssessAbility2']
-                            self.EnterpriseAbility2 = userform.cleaned_data['EnterpriseAbility2']
-                            self.TheoryUnderstand2 = userform.cleaned_data['TheoryUnderstand2']
-                            self.MessageDeal2 = userform.cleaned_data['MessageDeal2']
-                            self.PositiveEffect2 = userform.cleaned_data['PositiveEffect2']
-                            self.KnowladgeCombine2 = userform.cleaned_data['KnowladgeCombine2']
+            # 将小指标按大指标索引存入2阶list中并整合大指标和小指标
+            zhibiao = []
+            for i in range(Num):
+                zhibiao.append((zongzhibiao[i],
+                                Subtarget().__class__.objects.filter(alltarget=zongzhibiao[i]),
+                                hang[i]))
 
-                            self.save()
-
-                            return render(request, 'myApp/popwindow6.html', locals())
-
-                elif 'back' in request.POST:
-                    message = ""
-
-                else:
+            xianshifen = []
+            for i in range(Num):
+                zuhe = []
+                for j in Subtarget().__class__.objects.filter(alltarget=zongzhibiao[i]):
                     try:
-                        message = "see"
-                        self = ProfessAccess().__class__.objects.get(teacher=user)
+                        zuhe.append((j, TeacherAccess().__class__.objects.get(targetname=j, teahcers=user)))
                     except:
-                        message = "还未保存过"
+                        zuhe.append((j, 0))
 
-            login_form = SelfForm()
+                xianshifen.append((zongzhibiao[i], zuhe, hang[i]))
+
+            message = '无'
+            for i, j, k in xianshifen:
+                for z, fen in j:
+                    if fen != 0:
+                        message = '有'
+                        break
+
+                if message == '有':
+                    break
+
+            if request.method == 'POST':
+                if 'submit' in request.POST:
+                    for item in Subtarget.objects.all():
+                        score = TeacherAccess()
+                        score.teahcers = user
+                        score.targetname = item
+                        score.score1 = request.POST.get(item.targetname+'1')
+                        score.score2 = request.POST.get(item.targetname+'2')
+                        score.save()
+
+                    return redirect(('/teacher/user/%d') % int(num))
+
+                elif 'save' in request.POST:
+                    for item in Subtarget.objects.all():
+                        try:
+                            score = TeacherAccess().__class__.objects.get(targetname=item, teahcers=user)
+                            score.score1 = request.POST.get(item.targetname+ '1')
+                            score.score2 = request.POST.get(item.targetname + '2')
+                            score.save()
+                        except:
+                            score = TeacherAccess()
+                            score.teahcers = user
+                            score.targetname = item
+                            if request.POST.get(item.targetname + '1') and request.POST.get(item.targetname + '2'):
+                                score.score1 = request.POST.get(item.targetname + '1')
+                                score.score2 = request.POST.get(item.targetname + '2')
+                                score.save()
+                            else:
+                                pass
+
+
+                    return redirect(('/teacher/user/%d') % int(num))
+
+
+                elif 'exchange' in request.POST:
+                    message = '改'
+
             return render(request, 'myApp/popwindow6.html', locals())
-
-        else:
-            return redirect('myApp:teacheruser')
-
-    else:
-        return redirect('myApp:teacher')
 
 # def checkwindow(request, title):
 #     message = ""
@@ -758,6 +1033,11 @@ def popwindow(request, num):
 #     else:
 #         return redirect('myApp:teacher')
 
+def  comments_upload(request):
+    if request.method == 'POST':
+        return HttpResponse(request.POST['grade'])
+    else:
+        return HttpResponse(request.POST['grade'])
 
 def logouts(request):
     request.session.clear()

@@ -5,240 +5,128 @@
     <title>{{user.Pname}}</title>
 </head>
 
+<script>
+    function change1(){
+        var c = 0;
+        var list = document.getElementsByTagName("select");
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].value == "") {
+                c = c + 1;
+                 document.all.btn1.disabled=true;}
+            if (c == 0){
+                document.all.btn1.disabled=false;}
+        }
+        }
+</script>
+<script>
+    function change2(){
+        var c = 0;
+        var list = document.getElementsByTagName("select");
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].value == "") {
+                c = c + 1;
+                 document.all.btn2.disabled=true;}
+            if (c == 0){
+                document.all.btn2.disabled=false;}
+        }
+        }
+</script>
+
 {% load staticfiles %}
     <link rel="stylesheet" type="text/css"
           href="{% static '/myApp/css/studentassess.css' %}">
 
 <body>
-
-        <a href="{% url 'myApp:studentuser' %}" >用户</a>
+<div class="container">
+        <a href="{% url 'myApp:studentuser' %}" >返回用户</a>
+        <a href="{% url 'myApp:assess' %}" >返回评分</a>
 
         <h1 class="header">专业培养评价表</h1>
 
-        <form method="post">
+        <form method="post" style="white-space: nowrap;">
             {% csrf_token %}
+        {% if message == '无' %}
+            <table style="margin:0px auto" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
+                {% for i in new %}
+                    <tr align="center">
+                        {% for j in i.0 %}
+                            <td align="center" rowspan={{row|get_item:j.factorname}} colspan={{col|get_item:j.factorname}}>{{j.factorname}}</td>
+                        {% endfor %}
 
-            {% if message == "see" %}
-                <table style="margin:0px auto" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
-                        <tbody align="center">
-                            <tr>
-                                <td rowspan="16">培养安排因素</td>
-                                <td rowspan="11">课程学习</td>
-                                <td colspan="2">课程实践性</td>
-                                <td>{{CULT.CoursePractice}}</td>
-                            </tr>
-                            <tr>
-                                <td rowspan="4">教室教学实践性</td>
-                                <td>教师会介绍行业最新发展动态</td>
-                                <td>{{CULT.E_IndustryDynamics}}</td>
-                            </tr>
-                            <tr>
-                                <td>教师能很好地将理论知识与行业实践相融合</td>
-                                <td>{{CULT.E_PracticeCombine}}</td>
-                            </tr>
-                            <tr>
-                                <td>教师善于根据实际情况运用案例教学等方法</td>
-                                <td>{{CULT.E_UseingCase}}</td>
-                            </tr>
-                            <tr>
-                                <td>教师善于开展不同形式的实践活动</td>
-                                <td>{{CULT.E_DifferentActivity}}</td>
-                            </tr>
-                            <tr>
-                                <td rowspan="4">实践性教学方法使用频率</td>
-                                <td>理论与实践相结合</td>
-                                <td>{{CULT.F_IndustryDynamics}}</td>
-                            </tr>
-                            <tr>
-                                <td>运用案例教学方法</td>
-                                <td>{{CULT.F_PracticeCombine}}</td>
-                            </tr>
-                            <tr>
-                                <td>介绍发展动态</td>
-                                <td>{{CULT.F_UseingCase}}</td>
-                            </tr>
-                            <tr>
-                                <td>不同形式的课堂实践活动</td>
-                                <td>{{CULT.F_DifferentActivity}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">传统教学方法使用频率</td>
-                                <td>{{CULT.F_TraditionClass}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">课程学习效果</td>
-                                <td>{{CULT.F_CourseEffect}}</td>
-                            </tr>
-                            <tr>
-                                <td rowspan="4">导师指导</td>
-                                <td colspan="2">校内导师指导效果</td>
-                                <td>{{CULT.I_TeacherDirect}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">校外导师指导效果</td>
-                                <td>{{CULT.O_TeacherDirect}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">校内导师胜任能力</td>
-                                <td>{{CULT.I_TeacherAbility}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">校外导师胜任能力</td>
-                                <td>{{CULT.O_TeacherAbility}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">学位论文与行业实践关系的密切程度</td>
-                                <td>{{CULT.ThesisCombinePractice}}</td>
-                            </tr>
-                            <tr>
-                                <td  rowspan="4">专业实践因素</td>
-                                <td colspan="3">专业实践起始时间</td>
-                                <td>{{PROFESS.PracticeBeginTime}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">专业实践时长</td>
-                                <td>{{PROFESS.ContinueTime}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">专业实践活动参加频率</td>
-                                <td>{{PROFESS.ActivityFrequency}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">专业实践内容的系统性</td>
-                                <td>{{PROFESS.ActivityContent}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="4">专业实践的机会满意度</td>
-                                <td>{{PROFESS.ActivitySatisfy}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="4">专业实践效果</td>
-                                <td>{{PROFESS.ActivityEffect}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                            <td><select onchange="change1()" name={{i.2}}><option></option>
+                                    {%for k in i.1 %}
+                                        <option>{{k}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                    </tr>
+                {% endfor %}
 
-                <p align="center">
-                    <input type="submit" value="返回" name="back">
-                </p>
+            </table>
 
-            {% else %}
-                <h2 class="header">{{message}}</h2>
-                <table style="margin:0px auto" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
-                    <tbody align="center">
-                        <tr>
-                            <td rowspan="16">培养安排因素</td>
-                            <td rowspan="11">课程学习</td>
-                            <td colspan="2">课程实践性</td>
-                            <td>{{login_form.CoursePractice}}</td>
-                        </tr>
-                        <tr>
-                            <td rowspan="4">教室教学实践性</td>
-                            <td>教师会介绍行业最新发展动态</td>
-                            <td>{{login_form.E_IndustryDynamics}}</td>
-                        </tr>
-                        <tr>
-                            <td>教师能很好地将理论知识与行业实践相融合</td>
-                            <td>{{login_form.E_PracticeCombine}}</td>
-                        </tr>
-                        <tr>
-                            <td>教师善于根据实际情况运用案例教学等方法</td>
-                            <td>{{login_form.E_UseingCase}}</td>
-                        </tr>
-                        <tr>
-                            <td>教师善于开展不同形式的实践活动</td>
-                            <td>{{login_form.E_DifferentActivity}}</td>
-                        </tr>
-                        <tr>
-                            <td rowspan="4">实践性教学方法使用频率</td>
-                            <td>理论与实践相结合</td>
-                            <td>{{login_form.F_IndustryDynamics}}</td>
-                        </tr>
-                        <tr>
-                            <td>运用案例教学方法</td>
-                            <td>{{login_form.F_PracticeCombine}}</td>
-                        </tr>
-                        <tr>
-                            <td>介绍发展动态</td>
-                            <td>{{login_form.F_UseingCase}}</td>
-                        </tr>
-                        <tr>
-                            <td>不同形式的课堂实践活动</td>
-                            <td>{{login_form.F_DifferentActivity}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">传统教学方法使用频率</td>
-                            <td>{{login_form.F_TraditionClass}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">课程学习效果</td>
-                            <td>{{login_form.F_CourseEffect}}</td>
-                        </tr>
-                        <tr>
-                            <td rowspan="4">导师指导</td>
-                            <td colspan="2">校内导师指导效果</td>
-                            <td>{{login_form.I_TeacherDirect}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">校外导师指导效果</td>
-                            <td>{{login_form.O_TeacherDirect}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">校内导师胜任能力</td>
-                            <td>{{login_form.I_TeacherAbility}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">校外导师胜任能力</td>
-                            <td>{{login_form.O_TeacherAbility}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">学位论文与行业实践关系的密切程度</td>
-                            <td>{{login_form.ThesisCombinePractice}}</td>
-                        </tr>
-                        <tr>
-                            <td  rowspan="4">专业实践因素</td>
-                            <td colspan="3">专业实践起始时间</td>
-                            <td>{{login_form.PracticeBeginTime}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">专业实践时长</td>
-                            <td>{{login_form.ContinueTime}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">专业实践活动参加频率</td>
-                            <td>{{login_form.ActivityFrequency}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">专业实践内容的系统性</td>
-                            <td>{{login_form.ActivityContent}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="4">专业实践的机会满意度</td>
-                            <td>{{login_form.ActivitySatisfy}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="4">专业实践效果</td>
-                            <td>{{login_form.ActivityEffect}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-    <div style="margin:0 auto;width:130px;height:0px;">
-                    <input type="submit" value="提交" name="submit">
-    </div>
+            <div style="position:relative;margin:0 auto;width:130px;height:0px;top:10px;margin-bottom:100px">
+                <input align="center" type="submit" value="保存" name="submit" id="btn1" disabled>
+            </div>
+
+        {% elif message == '有' %}
+            <table style="margin:0px auto" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
+                {% for i in update %}
+                    <tr align="center">
+                        {% for j in i.0 %}
+                            <td align="center" rowspan={{row|get_item:j.factorname}} colspan={{col|get_item:j.factorname}}>{{j.factorname}}</td>
+                        {% endfor %}
+                        <td><font color="red">{{i.1}}</font></td>
+                    </tr>
+                {% endfor %}
+
+            </table>
+
+            <div style="position:relative;margin:0 auto;width:130px;height:0px;top:10px;margin-bottom:100px">
+                <input align="center" type="submit" value="更改" name="exchange" >
+            </div>
+
+        {% elif message == '改' %}
+             <table style="margin:0px auto" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
+                {% for i in greet %}
+                    <tr align="center">
+                        {% for j in i.0 %}
+                            <td align="center" rowspan={{row|get_item:j.factorname}} colspan={{col|get_item:j.factorname}}>{{j.factorname}}</td>
+                        {% endfor %}
+
+                            <td align="center">
+                                <font color="red">
+                                    {{i.3}}
+                                </font>
+                            </td>
+
+                            <td>
+                                <select onchange="change2()" name={{i.2}}><option></option>
+                                    {%for k in i.1 %}
+                                        {% if i.3 == k %}
+                                            <option selected='selected'>{{k}}</option>
+                                        {% else %}
+                                            <option>{{k}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </td>
+                    </tr>
+                {% endfor %}
+
+            </table>
+
+            <div style="position:relative;margin:0 auto;width:130px;height:0px;top:10px;margin-bottom:100px">
+                <input align="center" type="submit" value="保存更改" name="save" id="btn2">
+            </div>
+
+        {% endif %}
 
         </form>
+</div>
 
-        <form method="post">
-            {% csrf_token %}
-    <div style="margin:-12px auto;width:20px;height:60px;text-align:center;">
-            <input type="submit" value="预览" name="see">
-    </div>
-        </form>
-            {% endif %}
-
-    <div class="foot">
-        重庆富博有限公司
-    </div>
+        <div class="footer">
+            <span>重庆富博有限公司</span>
+        </div>
 
 
 </body>
