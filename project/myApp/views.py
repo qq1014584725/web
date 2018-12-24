@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, render_to_response
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib import sessions
 from django.contrib.auth.forms import UserCreationForm
 from .models import *
@@ -105,7 +105,7 @@ def ProfessorEvaluate(Professor):
 ######################################################
 
 def index(request):
-    return render(request, 'myApp/index.html')
+    return render(request, 'myapp/index.html')
 
 def studentlogin(request):
     message = ""
@@ -126,10 +126,10 @@ def studentlogin(request):
                     message = "密码不正确！"
             except:
                 message = "用户不存在"
-        return render(request, 'myApp/studentlogin.html', locals())
+        return render(request, 'myapp/studentlogin.html', locals())
 
     login_form = IdForm()
-    return render(request, 'myApp/studentlogin.html', locals())
+    return render(request, 'myapp/studentlogin.html', locals())
 
 def studentregister(request):
     message = ""
@@ -156,17 +156,17 @@ def studentregister(request):
                         experience = userform.cleaned_data['experience']
                         user = Postgraduates.objects.create(Pid=username, Pname=name, Ppassword=password2, Pgender=gender, Pgrade=grade, Pdegree=degree, Pexperience=experience)
                         Postgraduates.save(user)
-                        return redirect("myApp:studentuser")
+                        return redirect("myapp:studentuser")
                     else:
                         message = "性别必须为男，女"
                 else:
                     message = "两次密码输入不同"
 
-        return render(request, 'myApp/studentregister.html', locals())
+        return render(request, 'myapp/studentregister.html', locals())
 
     else:
         userform = UserForm()
-    return render(request, 'myApp/studentregister.html', locals())
+    return render(request, 'myapp/studentregister.html', locals())
 
 def studentuser(request):
     message = ""
@@ -212,9 +212,9 @@ def studentuser(request):
             except:
                 document_homework = '学生还未提交作业'
 
-        return render(request, 'myApp/studentuser.html', locals())
+        return render(request, 'myapp/studentuser.html', locals())
     else:
-        return redirect('myApp:student')
+        return redirect('myapp:student')
 
 def studentchange1(request):
     if  request.session.get("username", None):
@@ -237,12 +237,12 @@ def studentchange1(request):
                 user.Pexperience = experience
                 user.Pgender = gender
                 user.save()
-                return redirect('myApp:studentuser')
+                return redirect('myapp:studentuser')
 
         login_form = ChangeForm()
-        return render(request, 'myApp/studentchange1.html', locals())
+        return render(request, 'myapp/studentchange1.html', locals())
     else:
-        return redirect('myApp:student')
+        return redirect('myapp:student')
 
 def studentchange2(request):
     message = ""
@@ -257,14 +257,14 @@ def studentchange2(request):
                 if password1 == password2:
                     user.Ppassword = password1
                     user.save()
-                    return redirect('myApp:student')
+                    return redirect('myapp:student')
                 else:
                     message = "两次输入密码不一致"
 
         login_form = PasswordForm()
-        return render(request, 'myApp/studentchange2.html', locals())
+        return render(request, 'myapp/studentchange2.html', locals())
     else:
-        return redirect('myApp:student')
+        return redirect('myapp:student')
 
 
 def studentassess(request):
@@ -434,7 +434,7 @@ def studentassess(request):
                     score.factorsvalue = request.POST.get(item.factorname)
                     score.save()
 
-                return redirect("myApp:studentuser")
+                return redirect("myapp:studentuser")
 
             elif 'save' in request.POST:
                 for item in Sub1Factors.objects.filter(isvalue=True):
@@ -473,15 +473,15 @@ def studentassess(request):
                         score.factorsvalue = request.POST.get(item.factorname)
                         score.save()
 
-                return redirect("myApp:studentuser")
+                return redirect("myapp:studentuser")
 
             elif 'exchange' in request.POST:
                 message = '改'
                 greet = list(zip(store, end, name, content))
 
-        return render(request, 'myApp/studentassess.html', locals())
+        return render(request, 'myapp/studentassess.html', locals())
     else:
-        return redirect("myApp:student")
+        return redirect("myapp:student")
 
 def studentselfestimate(request):
     message = ""
@@ -536,7 +536,7 @@ def studentselfestimate(request):
                     score.score = request.POST.get(item.targetname)
                     score.save()
 
-                return redirect("myApp:studentuser")
+                return redirect("myapp:studentuser")
 
             elif 'save' in request.POST:
                 for item in Subtarget.objects.all():
@@ -554,16 +554,16 @@ def studentselfestimate(request):
                         else:
                             pass
 
-                return redirect("myApp:studentuser")
+                return redirect("myapp:studentuser")
 
 
             elif 'exchange' in request.POST:
                 message = '改'
 
 
-        return render(request, "myApp/studentselfestimate.html", locals())
+        return render(request, "myapp/studentselfestimate.html", locals())
     else:
-        return redirect("myApp:student")
+        return redirect("myapp:student")
 
 def teacherlogin(request):
     message = ""
@@ -584,10 +584,10 @@ def teacherlogin(request):
                     message = "密码不正确！"
             except:
                 message = "用户不存在"
-        return render(request, 'myApp/teacherlogin.html', locals())
+        return render(request, 'myapp/teacherlogin.html', locals())
 
     login_form = IdForm()
-    return render(request, 'myApp/teacherlogin.html', locals())
+    return render(request, 'myapp/teacherlogin.html', locals())
 
 def teacheruser(request):
     if  request.session.get("username", None):
@@ -601,7 +601,7 @@ def teacheruser(request):
                 for j in Postgraduates.objects.filter(Pgrade=grade):
                     AllUser.append(j)
             except:
-                return render(request, 'myApp/teacheruser.html', locals())
+                return render(request, 'myapp/teacheruser.html', locals())
 
         else:
             all_zhibiao = []
@@ -645,10 +645,10 @@ def teacheruser(request):
 
             jieguo = zip(all_zhibiao, Nomalization, Inital, Judge)
 
-        return render(request, 'myApp/teacheruser.html', locals())
+        return render(request, 'myapp/teacheruser.html', locals())
 
     else:
-        return redirect('myApp:teacher')
+        return redirect('myapp:teacher')
 
 def popwindow(request, num):
     message = ""
@@ -787,7 +787,7 @@ def popwindow(request, num):
 
                 end.append(j)
 
-            return render(request, 'myApp/popwindow1.html', locals())
+            return render(request, 'myapp/popwindow1.html', locals())
 
         elif num[-1] == '2':
             message = '无'
@@ -831,7 +831,7 @@ def popwindow(request, num):
                     break
 
 
-            return render(request, 'myApp/popwindow2.html', locals())
+            return render(request, 'myapp/popwindow2.html', locals())
 
         elif num[-1] == '3':
             student = Postgraduates().__class__.objects.get(id=num[0:-1])
@@ -840,7 +840,7 @@ def popwindow(request, num):
                 AllHomework.append(i)
             if len(AllHomework) == 0:
                 message = "学生提交作业"
-            return render(request, 'myApp/popwindow3.html', locals())
+            return render(request, 'myapp/popwindow3.html', locals())
 
         elif num[-1] == '4':
             student = Postgraduates().__class__.objects.get(id=num[0:-1])
@@ -849,7 +849,7 @@ def popwindow(request, num):
                 AllTest.append(i)
             if len(AllTest) == 0:
                 message = "学生提交论文"
-            return render(request, 'myApp/popwindow4.html', locals())
+            return render(request, 'myapp/popwindow4.html', locals())
 
         elif num[-1] == '5':
             student = Postgraduates.objects.get(id=num[0:-1])
@@ -927,7 +927,7 @@ def popwindow(request, num):
                 elif 'exchange' in request.POST:
                     message = '改'
 
-            return render(request, 'myApp/popwindow5.html', locals())
+            return render(request, 'myapp/popwindow5.html', locals())
 
         elif num[-1] == '6':
             zongzhibiao = Alltarget.objects.all()
@@ -1006,7 +1006,7 @@ def popwindow(request, num):
                 elif 'exchange' in request.POST:
                     message = '改'
 
-            return render(request, 'myApp/popwindow6.html', locals())
+            return render(request, 'myapp/popwindow6.html', locals())
 
 # def checkwindow(request, title):
 #     message = ""
@@ -1016,7 +1016,7 @@ def popwindow(request, num):
 #         L = title.split('_')
 #         student = L[-1]
 #         Title = L[0]
-#         content_ = changePdfToText('static/myApp/upload/%s/test/%s' % (student, Title))
+#         content_ = changePdfToText('static/myapp/upload/%s/test/%s' % (student, Title))
 #         key_word = content_.split('关键词：')[1]
 #         key_word = key_word.split('\n')[0]
 #         key_word = key_word.split('，')
@@ -1028,21 +1028,28 @@ def popwindow(request, num):
 #
 #         JianSuo = jiansuo(key_word, content)
 #
-#         return render(request, 'myApp/checkwindow.html', locals())
+#         return render(request, 'myapp/checkwindow.html', locals())
 #
 #     else:
-#         return redirect('myApp:teacher')
+#         return redirect('myapp:teacher')
 
 def  comments_upload(request):
     if request.method == 'POST':
-        return HttpResponse(request.POST['grade'])
-    else:
-        return HttpResponse(request.POST['grade'])
+        grade = request.POST.get("grade", None)
+        AllUser = []
+        try:
+            grade = int(grade)
+            for j in Postgraduates.objects.filter(Pgrade=grade):
+                AllUser.append([j.id, j.Pname, j.Pgender, j.Pgrade])
+        except:
+            AllUser.append('没有')
+        return JsonResponse(AllUser, safe=False)
+
 
 def logouts(request):
     request.session.clear()
-    return redirect('myApp:studentuser')
+    return redirect('myapp:studentuser')
 
 def logoutt(request):
     request.session.clear()
-    return redirect('myApp:teacheruser')
+    return redirect('myapp:teacheruser')

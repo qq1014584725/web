@@ -15,7 +15,7 @@ class Postgraduates(models.Model):
     Pexperience = models.CharField(max_length=50, verbose_name='工作经历')
 
     class Meta:
-        db_table = 'myApp_Postgraduates'  # 数据库名
+        db_table = 'myapp_Postgraduates'  # 数据库名
         verbose_name = '学生'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
         verbose_name_plural = '学生用户管理'  # 修改管理级页面显示
 
@@ -24,12 +24,12 @@ class Postgraduates(models.Model):
 
 def upload_to1(instance, filename):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'static/myApp/upload/')
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'static/myapp/upload/')
     return '/'.join([MEDIA_ROOT, instance.student_id, 'test', filename])
 
 def upload_to2(instance, filename):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'static/myApp/upload/')
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'static/myapp/upload/')
     return '/'.join([MEDIA_ROOT, instance.student_id, 'homework', filename])
 
 class PostgraduatesTest(models.Model):
@@ -58,7 +58,7 @@ class Teachers(models.Model):
         return self.Tname
 
     class Meta:
-        db_table = 'myApp_Teachers'  # 数据库名
+        db_table = 'myapp_Teachers'  # 数据库名
         verbose_name = '教师'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
         verbose_name_plural = '教师用户管理'  # 修改管理级页面显示
 # ////////////////////////////
@@ -87,7 +87,7 @@ class Sub1Factors(models.Model):
 
     class Meta:
         db_table = 'myApp_Sub1Factors'  # 数据库名
-        verbose_name = '一综合养因素'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name = '一级综合因素'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
         verbose_name_plural = '一级综合因素管理'  # 修改管理级页面显示
 
     def __str__(self):
@@ -101,7 +101,7 @@ class Sub2Factors(models.Model):
     factors = models.ForeignKey(Sub1Factors, on_delete=models.CASCADE, verbose_name='所属因素')
 
     class Meta:
-        db_table = 'myApp_Sub2Factors'  # 数据库名
+        db_table = 'myapp_Sub2Factors'  # 数据库名
         verbose_name = '二级综合因素'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
         verbose_name_plural = '二级综合因素管理'  # 修改管理级页面显示
 
@@ -116,7 +116,7 @@ class Sub3Factors(models.Model):
     factors = models.ForeignKey(Sub2Factors, on_delete=models.CASCADE, verbose_name='所属因素')
 
     class Meta:
-        db_table = 'myApp_Sub3Factors'  # 数据库名
+        db_table = 'myapp_Sub3Factors'  # 数据库名
         verbose_name = '三级综合因素'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
         verbose_name_plural = '三级综合因素管理'  # 修改管理级页面显示
 
@@ -130,7 +130,7 @@ class StudentFactorsvalue1(models.Model):
     factorsattribute = models.ForeignKey(Sub1Factors, on_delete=models.CASCADE, verbose_name='所属因素')
 
     class Meta:
-        db_table = 'myApp_StudentFactorsvalue1'  # 数据库名
+        db_table = 'myapp_StudentFactorsvalue1'  # 数据库名
         verbose_name = '一级因素评分'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
         verbose_name_plural = '一级因素评分'  # 修改管理级页面显示
 
@@ -144,7 +144,7 @@ class StudentFactorsvalue2(models.Model):
     factorsattribute = models.ForeignKey(Sub2Factors, on_delete=models.CASCADE, verbose_name='所属因素')
 
     class Meta:
-        db_table = 'myApp_StudentFactorsvalue2'  # 数据库名
+        db_table = 'myapp_StudentFactorsvalue2'  # 数据库名
         verbose_name = '二级因素评分'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
         verbose_name_plural = '二级因素评分'  # 修改管理级页面显示
 
@@ -159,7 +159,7 @@ class StudentFactorsvalue3(models.Model):
     factorsattribute = models.ForeignKey(Sub3Factors, on_delete=models.CASCADE, verbose_name='所属因素')
 
     class Meta:
-        db_table = 'myApp_StudentFactorsvalue3'  # 数据库名
+        db_table = 'myapp_StudentFactorsvalue3'  # 数据库名
         verbose_name = '三级因素评分'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
         verbose_name_plural = '三级因素评分'  # 修改管理级页面显示
 
@@ -173,7 +173,7 @@ class Alltarget(models.Model):
     targetname = models.CharField(max_length=30, verbose_name='大指标名称')
 
     class Meta:
-        db_table = 'myApp_Alltarget'  # 数据库名
+        db_table = 'myapp_Alltarget'  # 数据库名
         verbose_name = '大指标'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
         verbose_name_plural = '综合大指标'  # 修改管理级页面显示
 
@@ -186,7 +186,7 @@ class Subtarget(models.Model):
     alltarget = models.ForeignKey("Alltarget", on_delete=models.CASCADE, verbose_name='大指标名称')
 
     class Meta:
-        db_table = 'myApp_Subtarget'  # 数据库名
+        db_table = 'myapp_Subtarget'  # 数据库名
         verbose_name = '小指标'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
         verbose_name_plural = '综合小指标'  # 修改管理级页面显示
 
@@ -200,7 +200,7 @@ class StudentselfAccess(models.Model):
     postgraduates = models.ForeignKey("Postgraduates", on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'myApp_StudentselfAccess'  # 数据库名
+        db_table = 'myapp_StudentselfAccess'  # 数据库名
         verbose_name = '学生自评分数'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
         verbose_name_plural = '学生自评分数'  # 修改管理级页面显示
 
@@ -215,7 +215,7 @@ class TeacherAccess(models.Model):
     teahcers = models.ForeignKey("Teachers", on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'myApp_TeacherAccess'  # 数据库名
+        db_table = 'myapp_TeacherAccess'  # 数据库名
         verbose_name = '教师评分'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
         verbose_name_plural = '教师评分'  # 修改管理级页面显示
 
@@ -230,7 +230,7 @@ class TeachertoStudent(models.Model):
     postgraduates = models.ForeignKey("Postgraduates", on_delete=models.CASCADE, verbose_name='学生名称')
 
     class Meta:
-        db_table = 'myApp_TeachertoStudent'  # 数据库名
+        db_table = 'myapp_TeachertoStudent'  # 数据库名
         verbose_name = '教师对学生评分管理'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
         verbose_name_plural = '教师对学生评分管理'  # 修改管理级页面显示
 

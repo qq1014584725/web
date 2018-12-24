@@ -5,8 +5,8 @@
     <title>{{student.Pname}}</title>
 
     {% load staticfiles %}
-    <script type="text/javascript" src="/static/myApp/js/jquery-3.3.1.min.js"></script>
-    <script type="text/javascript" src="/static/myApp/js/jquery.media.js"></script>
+    <script type="text/javascript" src="/static/myapp/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/static/myapp/js/jquery.media.js"></script>
     <script type="text/javascript">
         $(function() {
             $('a.media').media(width:450, height:350);
@@ -19,7 +19,7 @@
 
         {% for Homework in AllHomework %}
             <p>
-                <a class="media" href="/static/myApp/upload/{{student.id}}/homework/{{Homework.name}}">{{Homework.name}}</a>
+                <a class="media" href="/static/myapp/upload/{{student.id}}/homework/{{Homework.name}}">{{Homework.name}}</a>
             </p>
         {% endfor %}
 </body>

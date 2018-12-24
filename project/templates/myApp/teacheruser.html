@@ -6,8 +6,8 @@
 
     {% load staticfiles %}
     <link rel="stylesheet" type="text/css"
-          href="{% static '/myApp/css/teacheruser.css' %}">
-    <script src="/static/myApp/js/jquery-3.3.1.min.js"></script>
+          href="{% static '/myapp/css/teacheruser.css' %}">
+    <script src="/static/myapp/js/jquery-3.3.1.min.js"></script>
 
     <script>
             function popupFunc(url)
@@ -16,32 +16,7 @@
             }
     </script>
 
-    <script>
-        $(document).ready(function(){
-            $.ajaxSetup({
-                 data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
-            });
-        $('#form1').submit(function(){
-                var grade = $("#id_grade").val();                 //获得form中用户输入的grade 注意这里的id_grade 与你html中的id一致
-
-                $.ajax({
-                    type:"POST",
-                    data: {grade:grade},
-                    url: "{% url 'myApp:comments_upload' %}", //后台处理函数的url 这里用的是static url 需要与urls.py中的name一致
-                    cache: false,
-                    dataType: "html",
-                    success: function(result, statues, xml){
-                        alert(result);                                         //成功时弹出view传回来的结果
-                    },
-                    error: function(){
-                        alert("false");
-                    }
-                });
-                return false;
-            });
-
-        });
-    </script>
+    <!--<script>-->-->
 
     <script type="text/javascript">
     function applySelectedTo(link) {
@@ -125,9 +100,9 @@
 
 
 <body onLoad="showTime()" class="body">
-            <div ><img src="/static/myApp/img/4.png" width="100%" height="250px"></div>
+            <div ><img src="/static/myapp/img/4.png" width="100%" height="250px"></div>
 
-            <div style="position: absolute;top:16px;"><img src="/static/myApp/img/10.png" align="absmiddle" ></div>
+            <div style="position: absolute;top:16px;"><img src="/static/myapp/img/10.png" align="absmiddle" ></div>
 
         <form name="timeform" method="POST" action="">
             <table width="10px" style="position:absolute;top:24px;left:305px;">
@@ -139,8 +114,8 @@
         </form>
 
 
-                <a href="{% url 'myApp:logoutt' %}"  class="menu_head">注销</a>
-            <!--<div ><img src="/static/myApp/img/4.png" width="100%" height="250px"></div>-->
+                <a href="{% url 'myapp:logoutt' %}"  class="menu_head">注销</a>
+            <!--<div ><img src="/static/myapp/img/4.png" width="100%" height="250px"></div>-->
 
             <a class="wc">欢迎您: {{user.Tname}}老师</a>
 
@@ -149,17 +124,16 @@
             <!--导航栏-->
 <ul class="nav">
  <!--<li><a onclick="applySelectedTo(this);return false;" href="#heartbreakHotel" class="selected">主页</a></li>-->
- <li><a onclick="applySelectedTo(this);return false;" href="#blueSuedeShoes" >学生名单</a></li>
- <li><a onclick="applySelectedTo(this);return false;" href="#houndDog" class="selected">教师评价</a></li>
+ <li><a onclick="applySelectedTo(this);return false;" href="#blueSuedeShoes" class="selected">学生名单</a></li>
+ <li><a onclick="applySelectedTo(this);return false;" href="#houndDog">教师评价</a></li>
 </ul>
 <div  id="content">
  <!--<div class="on" id="heartbreakHotel">-->
-                                <!--<p style="position:absolute;top:250px;left:28%;heoght:50%"><img src="/static/myApp/img/8.jpg" ></p>-->
+                                <!--<p style="position:absolute;top:250px;left:28%;heoght:50%"><img src="/static/myapp/img/8.jpg" ></p>-->
 
  <!--</div>-->
 
- <div id="blueSuedeShoes" >
-
+ <div id="blueSuedeShoes" class="on">
 
           {% for User in AllUser %}
                                 <p align="center" style="position:relative;top:90px;">
@@ -186,7 +160,7 @@
 
  </div>
 
- <div  id="houndDog"  style=";text-align:center;position:relative;top:70px;" class="on">
+ <div  id="houndDog"  style=";text-align:center;position:relative;top:70px;">
   <p><a href="javascript:void(0);" onclick="popupFunc({{User.id}}6)" >教师评价综合指标</a></p>
      <!--导航条显示计算好的表格和综合评价指标-->
              <table style="margin:0px auto" border="1" width="60%" bgcolor="#e9faff" cellpadding="8" align="center">

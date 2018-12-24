@@ -7,8 +7,8 @@
 
     {% load staticfiles %}
     <link rel="stylesheet" type="text/css"
-          href="{% static '/myApp/css/studentuser.css' %}">
-    <script src="/static/myApp/js/jquery-3.3.1.min.js"></script>
+          href="{% static '/myapp/css/studentuser.css' %}">
+    <script src="/static/myapp/js/jquery-3.3.1.min.js"></script>
 
     <script type="text/javascript">
     function showTime()
@@ -135,21 +135,21 @@ var imgName = document.all.up_file1.value;
             </table>
         </form>
 
-            <div><img src="/static/myApp/img/4.png" width="100%" height="250px"></div>
-            <div style="position:absolute;top:17px;left:12px"><img src="/static/myApp/img/10.png" ></div>
+            <div><img src="/static/myapp/img/4.png" width="100%" height="250px"></div>
+            <div style="position:absolute;top:17px;left:12px"><img src="/static/myapp/img/10.png" ></div>
 
             <!--<h1 class="header">欢迎{{user.Pname}}</h1>-->
 
 
             <div class="menu_head">
-                <a href="{% url 'myApp:change1' %}" >更改信息</a>
-                <a href="{% url 'myApp:change2' %}">更改密码</a>
-                <a href="{% url 'myApp:logouts' %}" >注销</a>
+                <a href="{% url 'myapp:change1' %}" >更改信息</a>
+                <a href="{% url 'myapp:change2' %}">更改密码</a>
+                <a href="{% url 'myapp:logouts' %}" >注销</a>
             </div>
 
             <ul class="nav">
-                <li><a href="{% url 'myApp:assess' %}">专业培养评价表</a></li>
-                <li><a href="{% url 'myApp:selfestimate' %}">研究生自我评价表</a></li>
+                <li><a href="{% url 'myapp:assess' %}">专业培养评价表</a></li>
+                <li><a href="{% url 'myapp:selfestimate' %}">研究生自我评价表</a></li>
             </ul>
 
 

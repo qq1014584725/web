@@ -122,13 +122,13 @@
 
     {% load staticfiles %}
     <link rel="stylesheet" type="text/css"
-          href="{% static '/myApp/css/studentselfestimate.css' %}">
+          href="{% static '/myapp/css/studentselfestimate.css' %}">
 
 <body>
 
 <div class="container">
-    <a href="{% url 'myApp:studentuser' %}" >返回用户</a>
-    <a href="{% url 'myApp:selfestimate' %}" >返回评价</a>
+    <a href="{% url 'myapp:studentuser' %}" >返回用户</a>
+    <a href="{% url 'myapp:selfestimate' %}" >返回评价</a>
 
     <h1 class="header">研究生自评表</h1>
     <hr size="1" noshade="noshade" width="100%">
