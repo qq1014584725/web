@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{student.Pname}}</title>
+
+    {% load staticfiles %}
+    <script type="text/javascript" src="/static/myapp/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/static/myapp/js/jquery.media.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $('a.media').media(width:450, height:350);
+        });
+    </script>
+
+    <script>
+            function popupFunc(url)
+            {
+                window.open(url, url, "status=1, height:1000, width:800, toolbar=0, resizeable=0")
+            }
+    </script>
+
+</head>
+<body>
+        <h1>{{message}}</h1>
+
+        {% for Test in AllTest %}
+            <p>
+                <a class="media" href="/upload/{{student.id}}/test/{{Test.name}}">{{Test.name}}</a>
+                <!--<a href="javascript:void(0);" onclick="popupFunc(/{{Test.name}}_{{student.id}}/)">教师评分</a>-->
+            </p>
+        {% endfor %}
+</body>
+</html>

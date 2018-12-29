@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{student.Pname}}</title>
+</head>
+<body>
+        <h1 align="center">{{student.Pname}}的专业培养评价</h1>
+        {% if message == "无" %}
+            <h1 align="center">{{message}}</h1>
+        {% else %}
+
+            <table style="margin:0px auto;margin-bottom:100px" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
+                {% for i in update %}
+                    <tr align="center">
+                        {% for j in i.0 %}
+                            <td align="center" rowspan={{count|get_item:j.factorname}} colspan={{col|get_item:j.factorname}}>{{j.factorname}}</td>
+                        {% endfor %}
+                            <td>
+                                <font color="red">
+                                    {{i.1.factorsvalue}}
+                                </font>
+                            </td>
+                    </tr>
+                {% endfor %}
+
+            </table>
+        {% endif %}
+</body>
+</html>

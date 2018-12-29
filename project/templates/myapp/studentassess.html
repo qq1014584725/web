@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{user.Pname}}</title>
+</head>
+
+<script>
+    function change1(){
+        var c = 0;
+        var list = document.getElementsByTagName("select");
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].value == "") {
+                c = c + 1;
+                 document.all.btn1.disabled=true;}
+            if (c == 0){
+                document.all.btn1.disabled=false;}
+        }
+        }
+</script>
+<script>
+    function change2(){
+        var c = 0;
+        var list = document.getElementsByTagName("select");
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].value == "") {
+                c = c + 1;
+                 document.all.btn2.disabled=true;}
+            if (c == 0){
+                document.all.btn2.disabled=false;}
+        }
+        }
+</script>
+
+{% load staticfiles %}
+    <link rel="stylesheet" type="text/css"
+          href="{% static '/myapp/css/studentassess.css' %}">
+
+<body>
+<div class="container">
+        <a href="{% url 'myapp:studentuser' %}" >返回用户</a>
+        <a href="{% url 'myapp:assess' %}" >返回评分</a>
+
+        <h1 class="header">专业培养评价表</h1>
+
+        <form method="post" style="white-space: nowrap;">
+            {% csrf_token %}
+        {% if message == '无' %}
+            <table style="margin:0px auto" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
+                {% for i in new %}
+                    <tr align="center">
+                        {% for j in i.0 %}
+                            <td align="center" rowspan={{row|get_item:j.factorname}} colspan={{col|get_item:j.factorname}}>{{j.factorname}}</td>
+                        {% endfor %}
+
+                            <td><select onchange="change1()" name={{i.2}}><option></option>
+                                    {%for k in i.1 %}
+                                        <option>{{k}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                    </tr>
+                {% endfor %}
+
+            </table>
+
+            <div style="position:relative;margin:0 auto;width:130px;height:0px;top:10px;margin-bottom:100px">
+                <input align="center" type="submit" value="保存" name="submit" id="btn1" disabled>
+            </div>
+
+        {% elif message == '有' %}
+            <table style="margin:0px auto" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
+                {% for i in update %}
+                    <tr align="center">
+                        {% for j in i.0 %}
+                            <td align="center" rowspan={{row|get_item:j.factorname}} colspan={{col|get_item:j.factorname}}>{{j.factorname}}</td>
+                        {% endfor %}
+                        <td><font color="red">{{i.1}}</font></td>
+                    </tr>
+                {% endfor %}
+
+            </table>
+
+            <div style="position:relative;margin:0 auto;width:130px;height:0px;top:10px;margin-bottom:100px">
+                <input align="center" type="submit" value="更改" name="exchange" >
+            </div>
+
+        {% elif message == '改' %}
+             <table style="margin:0px auto" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
+                {% for i in greet %}
+                    <tr align="center">
+                        {% for j in i.0 %}
+                            <td align="center" rowspan={{row|get_item:j.factorname}} colspan={{col|get_item:j.factorname}}>{{j.factorname}}</td>
+                        {% endfor %}
+
+                            <td align="center">
+                                <font color="red">
+                                    {{i.3}}
+                                </font>
+                            </td>
+
+                            <td>
+                                <select onchange="change2()" name={{i.2}}><option></option>
+                                    {%for k in i.1 %}
+                                        {% if i.3 == k %}
+                                            <option selected='selected'>{{k}}</option>
+                                        {% else %}
+                                            <option>{{k}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </td>
+                    </tr>
+                {% endfor %}
+
+            </table>
+
+            <div style="position:relative;margin:0 auto;width:130px;height:0px;top:10px;margin-bottom:100px">
+                <input align="center" type="submit" value="保存更改" name="save" id="btn2">
+            </div>
+
+        {% endif %}
+
+        </form>
+</div>
+
+        <div class="footer">
+            <span>重庆富博有限公司</span>
+        </div>
+
+
+</body>
+</html>

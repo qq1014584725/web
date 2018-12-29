@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>学生登录</title>
+
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css"
+          href="{% static '/myapp/css/login.css' %}">
+
+</head>
+
+<body background="/static/myapp/img/login.jpg"
+style=" background-repeat:no-repeat ;
+background-size:100% 100%;
+background-attachment: fixed;"
+text="#68228B" onload="setInterval('clock()',1000)">
+
+     <div id="content">
+         <div class="login-header">欢迎登陆</div>
+            <form method="post">
+                {% csrf_token %}
+                    <div class="login-input-box">
+                        <span class="icon icon-user"><img src="{% static '/myapp/img/user.png' %}"></span>
+                        {{login_form.username}}
+                    </div>
+
+                    <div class="login-input-box">
+                        <span class="icon icon-password"><img src="{% static '/myapp/img/password.png' %}"></span>
+                        {{login_form.password}}
+                    </div>
+
+                    <div class="login-button-box">
+                        <button type="submit">登陆</button>
+                    </div>
+
+                    <div class="logon-box">
+                        <a href="register/" class="button">注册</a>
+                        <h2 align="center">{{message}}</h2>
+                    </div>
+            </form>
+
+    </div>
+</body>
+</html>

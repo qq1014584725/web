@@ -1,0 +1,124 @@
+
+.menu_head1 {
+    <!--height: 30px;-->
+    line-height: 30px;
+    padding-left: 300px;
+    font-size: 14px;
+
+    <!--border: 1px solid #f1f1f1;-->
+    margin: -22px;
+    position: absolute;
+
+    font-weight: bold;
+    top:51px
+    }
+.menu_head2 {
+    <!--height: 30px;-->
+    line-height: 30px;
+    padding-left: 365px;
+    font-size: 14px;
+
+    <!--border: 1px solid #f1f1f1;-->
+    margin: -22px;
+    position: absolute;
+
+    font-weight: bold;
+    top:51px
+    }
+.menu_head3 {
+    <!--height: 30px;-->
+    line-height: 30px;
+    padding-left: 430px;
+    font-size: 14px;
+
+    <!--border: 1px solid #f1f1f1;-->
+    margin: -22px;
+    position: absolute;
+
+    font-weight: bold;
+    top:51px
+    }
+.submit {
+    position: absolute;
+    margin:-19px;
+    top:300px;
+    right:35px
+
+    }
+
+.wc {
+    position:absolute;
+    margin:0px;
+    top:51px;
+    left:350px;
+    font-size: 14px;
+    <!--color:#0000FF-->
+    }
+
+.body{
+    background-color:rgb(240,255,251);
+    }
+
+.fancybox-lock-test {
+    overflow-y: hidden !important;
+}
+
+
+
+        .nav {
+            overflow: hidden;
+            <!--background-color: #f4f4f4;-->
+        }
+        .nav li {
+            padding: 1px;
+            width: 100%;
+            color: #666;
+            list-style: none;
+            border-left: 1px solid #f4f4f4;
+            cursor: pointer;
+
+
+        }
+        .nav li:hover,.selected {
+            background-image: -webkit-gradient( linear,right top,left bottom,from(palegreen), to(transparent));
+            <!--background-color:#ecebeb;-->
+            border-left: 5px solid #ecebeb;
+            text-align:center;
+
+        }
+        .content{
+            <!--border: 1px solid #f4f4f4;-->
+            height: 1000px;
+            <!--padding: 100px;-->
+            <!--overflow: hidden;-->
+            align:center;
+        }
+
+
+
+
+
+        ul {
+            white-space: nowrap;
+            list-style-type:none;
+            margin: 0;
+            padding: 0;
+            width: 200px;
+            background-color: #ffffff;
+            position: fixed;
+            height: 100%;
+            overflow: auto;
+			border: 1px solid rgb(191,229,213);
+        }
+
+        li a {
+            white-space: nowrap;
+            display: block;
+            color: #000;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+
+#content div { display:none; }
+#content div.on { display:block; }
