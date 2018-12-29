@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import *
 from .forms import *
 from django.template.defaulttags import register
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # from pdfminer.pdfparser import PDFParser,PDFDocument
 # from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 # from pdfminer.converter import PDFPageAggregator
@@ -212,7 +213,14 @@ def studentuser(request):
             except:
                 document_homework = '学生还未提交作业'
 
+            student = []
+            for i in Postgraduates.objects.filter(Pgrade=user.Pgrade):
+                if i.id != user.id:
+                    student.append(i)
+
         return render(request, 'myapp/studentuser.html', locals())
+
+
     else:
         return redirect('myapp:student')
 
@@ -488,68 +496,70 @@ def studentselfestimate(request):
     if  request.session.get("username", None):
         username = request.session.get("username")
         user = Postgraduates.objects.get(Pid=username)
+        message = '无'
 
-        zongzhibiao = Alltarget.objects.all()
+        zongzhibiao = []
+        for i in Alltarget.objects.filter(isstudentself=True):
+            zongzhibiao.append(i)
+        xueshengzhibiao = []
 
-        #计算有几个大指标和所属小指标的个数
-        Num = 0
-        hang = []
-        for l in zongzhibiao:
-            cishu = 0
-            for n in Subtarget().__class__.objects.filter(alltarget=l):
-                cishu += 1
-            hang.append(cishu)
-            Num += 1
+        for i in zongzhibiao:
+            jiyi = []
+            for j in StudentselfAccessFactors.objects.all():
+                if j.targetname.alltarget == i:
+                    jiyi.append(j)
+            xueshengzhibiao.append(jiyi)
 
-        #将小指标按大指标索引存入2阶list中并整合大指标和小指标
-        zhibiao = []
-        for i in range(Num):
-            zhibiao.append((zongzhibiao[i], Subtarget().__class__.objects.filter(alltarget=zongzhibiao[i]), hang[i]))
+        changdu = []
+        for i in xueshengzhibiao:
+            changdu.append(len(i))
 
-        xianshifen = []
-        for i in range(Num):
-            zuhe = []
-            for j in Subtarget().__class__.objects.filter(alltarget=zongzhibiao[i]):
+        zhibiao = list(zip(zongzhibiao, xueshengzhibiao, changdu))
+
+        zuhe = []
+        for i,j,k in zhibiao:
+            xiaofen = []
+            for z in j:
                 try:
-                    zuhe.append((j, StudentselfAccess().__class__.objects.get(targetname=j, postgraduates=user)))
+                    xiaofen.append(StudentselfAccess().__class__.objects.get(targetname=z, postgraduates=user))
                 except:
-                    zuhe.append((j, 0))
+                    xiaofen.append(0)
+            zuhe.append(list(zip(j, xiaofen)))
 
-            xianshifen.append((zongzhibiao[i], zuhe, hang[i]))
+        xianshifen = list(zip(zongzhibiao, zuhe, changdu))
 
-            message = '无'
-            for i, j, k in xianshifen:
-                for z, fen in j:
-                    if fen != 0:
-                        message = '有'
-                        break
+        for i, j, k in xianshifen:
+            for name,fen in j:
+                if fen != 0:
+                    message = '有'
+                    break
 
                 if message == '有':
                     break
 
         if request.method == 'POST':
             if 'submit' in request.POST:
-                for item in Subtarget.objects.all():
+                for item in StudentselfAccessFactors.objects.all():
                     score = StudentselfAccess()
                     score.postgraduates = user
                     score.targetname = item
-                    score.score = request.POST.get(item.targetname)
+                    score.score = request.POST.get(item.targetname.targetname)
                     score.save()
 
                 return redirect("myapp:studentuser")
 
             elif 'save' in request.POST:
-                for item in Subtarget.objects.all():
+                for item in StudentselfAccessFactors.objects.all():
                     try:
                         score = StudentselfAccess().__class__.objects.get(targetname=item, postgraduates=user)
-                        score.score = request.POST.get(item.targetname)
+                        score.score = request.POST.get(item.targetname.targetname)
                         score.save()
                     except:
                         score = StudentselfAccess()
                         score.postgraduates = user
                         score.targetname = item
-                        if request.POST.get(item.targetname):
-                            score.score = request.POST.get(item.targetname)
+                        if request.POST.get(item.targetname.targetname):
+                            score.score = request.POST.get(item.targetname.targetname)
                             score.save()
                         else:
                             pass
@@ -562,6 +572,92 @@ def studentselfestimate(request):
 
 
         return render(request, "myapp/studentselfestimate.html", locals())
+    else:
+        return redirect("myapp:student")
+
+def studenttostudent(request, num):
+    if  request.session.get("username", None):
+        username = request.session.get("username")
+        user = Postgraduates.objects.get(Pid=username)
+        student = Postgraduates.objects.get(id=num)
+
+        zongzhibiao = []
+        for i in Alltarget.objects.filter(isstudenttostudent=True):
+            zongzhibiao.append(i)
+        hupingzhibiao = []
+
+        for i in zongzhibiao:
+            jiyi = []
+            for j in StudenttoStudentFactors.objects.all():
+                if j.targetname.alltarget == i:
+                    jiyi.append(j)
+            hupingzhibiao.append(jiyi)
+
+        changdu = []
+        for i in hupingzhibiao:
+            changdu.append(len(i))
+
+        zhibiao = list(zip(zongzhibiao, hupingzhibiao, changdu))
+
+        zuhe = []
+        for i, j, k in zhibiao:
+            xiaofen = []
+            for z in j:
+                try:
+                    xiaofen.append(StudenttoStudentScore().__class__.objects.get(targetname=z, himself=user, student=student))
+                except:
+                    xiaofen.append(0)
+            zuhe.append(list(zip(j, xiaofen)))
+
+        xianshifen = list(zip(zongzhibiao, zuhe, changdu))
+
+        message = '无'
+        for i, j, k in xianshifen:
+            for name,fen in j:
+                if fen != 0:
+                    message = '有'
+                    break
+
+                if message == '有':
+                    break
+
+        if request.method == 'POST':
+            if 'submit' in request.POST:
+                for item in StudenttoStudentFactors.objects.all():
+                    score = StudenttoStudentScore()
+                    score.himself = user
+                    score.student = student
+                    score.targetname = item
+                    score.score = request.POST.get(item.targetname.targetname)
+                    score.save()
+
+                return redirect(('/student/user/%d') % int(num))
+
+            elif 'save' in request.POST:
+                for item in StudenttoStudentFactors.objects.all():
+                    try:
+                        score = StudenttoStudentScore().__class__.objects.get(targetname=item, himself=user,
+                                                                              student=student)
+                        score.score = request.POST.get(item.targetname.targetname)
+                        score.save()
+                    except:
+                        score = StudenttoStudentScore()
+                        score.himself = user
+                        score.student = student
+                        score.targetname = item
+                        if request.POST.get(item.targetname.targetname):
+                            score.score = request.POST.get(item.targetname.targetname)
+                            score.save()
+                        else:
+                            pass
+
+                return redirect(('/student/user/%d') % int(num))
+
+            elif 'exchange' in request.POST:
+                message = '改'
+
+        return render(request, "myapp/studenttostudent.html", locals())
+
     else:
         return redirect("myapp:student")
 
@@ -601,7 +697,8 @@ def teacheruser(request):
                 for j in Postgraduates.objects.filter(Pgrade=grade):
                     AllUser.append(j)
             except:
-                return render(request, 'myapp/teacheruser.html', locals())
+                pass
+            return render(request, 'myapp/teacheruser.html', locals())
 
         else:
             all_zhibiao = []
@@ -852,71 +949,72 @@ def popwindow(request, num):
             return render(request, 'myapp/popwindow4.html', locals())
 
         elif num[-1] == '5':
-            student = Postgraduates.objects.get(id=num[0:-1])
-            zongzhibiao = Alltarget.objects.all()
-            # 计算有几个大指标和所属小指标的个数
-            Num = 0
-            hang = []
-            for l in zongzhibiao:
-                cishu = 0
-                for n in Subtarget().__class__.objects.filter(alltarget=l):
-                    cishu += 1
-                hang.append(cishu)
-                Num += 1
-
-            # 将小指标按大指标索引存入2阶list中并整合大指标和小指标
-            zhibiao = []
-            for i in range(Num):
-                zhibiao.append((zongzhibiao[i],
-                                Subtarget().__class__.objects.filter(alltarget=zongzhibiao[i]),
-                                hang[i]))
-
-            xianshifen = []
-            for i in range(Num):
-                zuhe = []
-                for j in Subtarget().__class__.objects.filter(alltarget=zongzhibiao[i]):
-                    try:
-                        zuhe.append((j, TeachertoStudent().__class__.objects.get(targetname=j, teahcers=user, postgraduates=student)))
-                    except:
-                        zuhe.append((j, 0))
-
-                xianshifen.append((zongzhibiao[i], zuhe, hang[i]))
-
             message = '无'
-            for i,j,k in xianshifen:
-                for z,fen in j:
+            student = Postgraduates.objects.get(id=num[0:-1])
+            zongzhibiao = []
+            for i in Alltarget.objects.filter(isteachertostudent=True):
+                zongzhibiao.append(i)
+            xueshengzhibiao = []
+
+            for i in zongzhibiao:
+                jiyi = []
+                for j in TeachertoStudentFactors.objects.all():
+                    if j.targetname.alltarget == i:
+                        jiyi.append(j)
+                xueshengzhibiao.append(jiyi)
+
+            changdu = []
+            for i in xueshengzhibiao:
+                changdu.append(len(i))
+
+            zhibiao = list(zip(zongzhibiao, xueshengzhibiao, changdu))
+
+            zuhe = []
+            for i, j, k in zhibiao:
+                xiaofen = []
+                for z in j:
+                    try:
+                        xiaofen.append(TeachertoStudent().__class__.objects.get(targetname=z, postgraduates=student, teahcers=user))
+                    except:
+                        xiaofen.append(0)
+                zuhe.append(list(zip(j, xiaofen)))
+
+            xianshifen = list(zip(zongzhibiao, zuhe, changdu))
+
+            for i, j, k in xianshifen:
+                for name, fen in j:
                     if fen != 0:
                         message = '有'
                         break
 
-                if message == '有':
-                    break
+                    if message == '有':
+                        break
 
             if request.method == 'POST':
                 if 'submit' in request.POST:
-                    for item in Subtarget.objects.all():
+                    for item in TeachertoStudentFactors.objects.all():
                         score = TeachertoStudent()
                         score.teahcers = user
                         score.postgraduates = student
                         score.targetname = item
-                        score.score = request.POST.get(item.targetname)
+                        score.score = request.POST.get(item.targetname.targetname)
                         score.save()
 
                     return redirect(('/teacher/user/%d')% int(num))
 
                 elif 'save' in request.POST:
-                    for item in Subtarget.objects.all():
+                    for item in TeachertoStudentFactors.objects.all():
                         try:
                             score = TeachertoStudent().__class__.objects.get(targetname=item, teahcers=user, postgraduates=student)
-                            score.score = request.POST.get(item.targetname)
+                            score.score = request.POST.get(item.targetname.targetname)
                             score.save()
                         except:
                             score = TeachertoStudent()
                             score.teahcers = user
                             score.postgraduates = student
                             score.targetname = item
-                            if request.POST.get(item.targetname):
-                                score.score = request.POST.get(item.targetname)
+                            if request.POST.get(item.targetname.targetname):
+                                score.score = request.POST.get(item.targetname.targetname)
                                 score.save()
                             else:
                                 pass
@@ -1008,6 +1106,268 @@ def popwindow(request, num):
 
             return render(request, 'myapp/popwindow6.html', locals())
 
+def zhuanjialogin(request):
+    message = ""
+    if request.method == 'POST':
+        login_form = IdForm(request.POST)
+        message = "输入不合法"
+        if login_form.is_valid():
+            username = login_form.cleaned_data['username']
+            password = login_form.cleaned_data['password']
+
+            try:
+                user = Zhuanjia.objects.get(Zid=username)
+                if user.Zpassword == password:
+                    request.session['username'] = username
+                    request.session.set_expiry(0)
+                    return redirect('user/')
+                else:
+                    message = "密码不正确！"
+            except:
+                message = "用户不存在"
+        return render(request, 'myapp/teacherlogin.html', locals())
+
+    login_form = IdForm()
+    return render(request, 'myapp/teacherlogin.html', locals())
+
+def zhuanjiauser(request):
+    if request.session.get("username", None):
+        username = request.session.get("username")
+        user = Zhuanjia.objects.get(Zid=username)
+
+        if request.method == 'POST':
+            grade = request.POST.get("grade", None)
+            try:
+                grade = int(grade)
+                AllUser = []
+                for j in Postgraduates.objects.filter(Pgrade=grade):
+                    AllUser.append(j)
+            except:
+                pass
+
+        return render(request, 'myapp/zhuanjiauser.html', locals())
+
+    else:
+        return redirect('myapp:zhuanjia')
+
+def zhuanjiatostudent(request,num):
+    if request.session.get("username", None):
+        username = request.session.get("username")
+        user = Zhuanjia.objects.get(Zid=username)
+
+        message = '无'
+        student = Postgraduates.objects.get(id=num)
+        zongzhibiao = []
+        for i in Alltarget.objects.filter(iszhuanjiatostudnet=True):
+            zongzhibiao.append(i)
+        xueshengzhibiao = []
+
+        for i in zongzhibiao:
+            jiyi = []
+            for j in ZhuanjiatoStudentFactors.objects.all():
+                if j.targetname.alltarget == i:
+                    jiyi.append(j)
+            xueshengzhibiao.append(jiyi)
+
+        changdu = []
+        for i in xueshengzhibiao:
+            changdu.append(len(i))
+
+        zhibiao = list(zip(zongzhibiao, xueshengzhibiao, changdu))
+
+        zuhe = []
+        for i, j, k in zhibiao:
+            xiaofen = []
+            for z in j:
+                try:
+                    xiaofen.append(
+                        ZhuanjiatoStudentScore().__class__.objects.get(targetname=z, student=student, himself=user))
+                except:
+                    xiaofen.append(0)
+            zuhe.append(list(zip(j, xiaofen)))
+
+        xianshifen = list(zip(zongzhibiao, zuhe, changdu))
+
+        for i, j, k in xianshifen:
+            for name, fen in j:
+                if fen != 0:
+                    message = '有'
+                    break
+
+                if message == '有':
+                    break
+
+        if request.method == 'POST':
+            if 'submit' in request.POST:
+                for item in ZhuanjiatoStudentFactors.objects.all():
+                    score = ZhuanjiatoStudentScore()
+                    score.himself = user
+                    score.student = student
+                    score.targetname = item
+                    score.score = request.POST.get(item.targetname.targetname)
+                    score.save()
+
+                return redirect(('/zhuanjia/user/%d') % int(num))
+
+            elif 'save' in request.POST:
+                for item in ZhuanjiatoStudentFactors.objects.all():
+                    try:
+                        score = ZhuanjiatoStudentScore().__class__.objects.get(targetname=item, himself=user,
+                                                                               student=student)
+                        score.score = request.POST.get(item.targetname.targetname)
+                        score.save()
+                    except:
+                        score = ZhuanjiatoStudentScore()
+                        score.himself = user
+                        score.student = student
+                        score.targetname = item
+                        if request.POST.get(item.targetname.targetname):
+                            score.score = request.POST.get(item.targetname.targetname)
+                            score.save()
+                        else:
+                            pass
+
+                return redirect(('/zhuanjia/user/%d') % int(num))
+
+            elif 'exchange' in request.POST:
+                message = '改'
+
+        return render(request, 'myapp/zhuanjiatostudent.html', locals())
+
+    else:
+        return redirect('myapp:zhuanjia')
+
+def danweilogin(request):
+    message = ""
+    if request.method == 'POST':
+        login_form = IdForm(request.POST)
+        message = "输入不合法"
+        if login_form.is_valid():
+            username = login_form.cleaned_data['username']
+            password = login_form.cleaned_data['password']
+
+            try:
+                user = Business.objects.get(Bid=username)
+                if user.Bpassword == password:
+                    request.session['username'] = username
+                    request.session.set_expiry(0)
+                    return redirect('user/')
+                else:
+                    message = "密码不正确！"
+            except:
+                message = "用户不存在"
+        return render(request, 'myapp/teacherlogin.html', locals())
+
+    login_form = IdForm()
+    return render(request, 'myapp/teacherlogin.html', locals())
+
+def danweiuser(request):
+    if request.session.get("username", None):
+        username = request.session.get("username")
+        user = Business.objects.get(Bid=username)
+        if request.method == 'POST':
+            grade = request.POST.get("grade", None)
+            try:
+                grade = int(grade)
+                AllUser = []
+                for j in Postgraduates.objects.filter(Pgrade=grade):
+                    AllUser.append(j)
+            except:
+                pass
+
+        return render(request, 'myapp/danweiuser.html', locals())
+
+    else:
+        return redirect('myapp:danwei')
+
+def danweitostudent(request, num):
+    if request.session.get("username", None):
+        username = request.session.get("username")
+        user = Business.objects.get(Bid=username)
+
+        message = '无'
+        student = Postgraduates.objects.get(id=num)
+        zongzhibiao = []
+        for i in Alltarget.objects.filter(isbusinesstostudnet=True):
+            zongzhibiao.append(i)
+        xueshengzhibiao = []
+
+        for i in zongzhibiao:
+            jiyi = []
+            for j in BusinesstoStudentFactors.objects.all():
+                if j.targetname.alltarget == i:
+                    jiyi.append(j)
+            xueshengzhibiao.append(jiyi)
+
+        changdu = []
+        for i in xueshengzhibiao:
+            changdu.append(len(i))
+
+        zhibiao = list(zip(zongzhibiao, xueshengzhibiao, changdu))
+
+        zuhe = []
+        for i, j, k in zhibiao:
+            xiaofen = []
+            for z in j:
+                try:
+                    xiaofen.append(
+                        BusinesstoStudentScore().__class__.objects.get(targetname=z, student=student, himself=user))
+                except:
+                    xiaofen.append(0)
+            zuhe.append(list(zip(j, xiaofen)))
+
+        xianshifen = list(zip(zongzhibiao, zuhe, changdu))
+
+        for i, j, k in xianshifen:
+            for name, fen in j:
+                if fen != 0:
+                    message = '有'
+                    break
+
+                if message == '有':
+                    break
+
+        if request.method == 'POST':
+            if 'submit' in request.POST:
+                for item in BusinesstoStudentFactors.objects.all():
+                    score = BusinesstoStudentScore()
+                    score.himself = user
+                    score.student = student
+                    score.targetname = item
+                    score.score = request.POST.get(item.targetname.targetname)
+                    score.save()
+
+                return redirect(('/danwei/user/%d') % int(num))
+
+            elif 'save' in request.POST:
+                for item in BusinesstoStudentFactors.objects.all():
+                    try:
+                        score = BusinesstoStudentScore().__class__.objects.get(targetname=item, himself=user,
+                                                                               student=student)
+                        score.score = request.POST.get(item.targetname.targetname)
+                        score.save()
+                    except:
+                        score = BusinesstoStudentScore()
+                        score.himself = user
+                        score.student = student
+                        score.targetname = item
+                        if request.POST.get(item.targetname.targetname):
+                            score.score = request.POST.get(item.targetname.targetname)
+                            score.save()
+                        else:
+                            pass
+
+                return redirect(('/danwei/user/%d') % int(num))
+
+            elif 'exchange' in request.POST:
+                message = '改'
+
+        return render(request, 'myapp/danweitostudent.html', locals())
+
+    else:
+        return redirect('myapp:danwei')
+
+
 # def checkwindow(request, title):
 #     message = ""
 #     if request.session.get("username", None):
@@ -1034,16 +1394,20 @@ def popwindow(request, num):
 #         return redirect('myapp:teacher')
 
 def  comments_upload(request):
+    AllUser = []
     if request.method == 'POST':
         grade = request.POST.get("grade", None)
-        AllUser = []
-        try:
-            grade = int(grade)
-            for j in Postgraduates.objects.filter(Pgrade=grade):
-                AllUser.append([j.id, j.Pname, j.Pgender, j.Pgrade])
-        except:
-            AllUser.append('没有')
+        grade = int(grade)
+        page = request.POST.get("page", None)
+        Postgraduates.objects.filter(Pgrade=grade)
+        paginator = Paginator(Postgraduates.objects.filter(Pgrade=grade), 10)
+        for j in paginator.get_page(page).object_list:
+            AllUser.append([j.id, j.Pname, j.Pgender, j.Pgrade])
+        AllUser.insert(0, page)
+        AllUser.insert(1,paginator.page(page).has_next())
         return JsonResponse(AllUser, safe=False)
+
+    return JsonResponse(AllUser, safe=False)
 
 
 def logouts(request):
@@ -1053,3 +1417,11 @@ def logouts(request):
 def logoutt(request):
     request.session.clear()
     return redirect('myapp:teacheruser')
+
+def logoutz(request):
+    request.session.clear()
+    return redirect('myapp:zhuanjiauser')
+
+def logoutb(request):
+    request.session.clear()
+    return redirect('myapp:danweiuser')

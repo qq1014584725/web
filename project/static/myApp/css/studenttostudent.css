@@ -1,0 +1,53 @@
+<style>
+    html, body {
+    margin: -1;
+    padding: 1;
+    height: 97.2%;
+}
+        .header{
+            height:80px;
+            width:100%;
+            font-size:30px;
+            font-family:"楷体";
+            text-align:center;
+        }
+        .zhushi{
+            white-space: nowrap;
+            text-align:center;
+            font-size:13px}
+        .main{
+            text-align:center;
+        }
+        .container {
+            position: position;
+            margin: 0 auto;
+            height: auto !important;
+            height: 100%;
+            min-height: 100%;
+        }
+
+
+
+        .footer {
+
+            position: relative;
+            width: 100%;
+            bottom: -40px;
+        }
+
+        .footer{
+            position:relative;
+            width:100%;
+                    text-align: center;
+                    background-color: darkslategrey;
+                    color: #fff;
+                    font-family: Arial;
+                    font-size: 14px;
+                    letter-spacing: 1px;
+        }
+
+        .footer span{
+            line-height: 42px;
+            }
+
+</style>

@@ -3,12 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>{{user.Pname}}</title>
-</head>
+
 
     {% load staticfiles %}
     <link rel="stylesheet" type="text/css"
           href="{% static '/myapp/css/studentuser.css' %}">
     <script src="/static/myapp/js/jquery-3.3.1.min.js"></script>
+
+     <script>
+            function popupFunc(url)
+            {
+                window.open(url, url, "status=1, height:800, width:600, toolbar=0, resizeable=0")
+            }
+    </script>
+
+    <script>
+    function applySelectedTo(link) {
+     var ul = document.getElementsByTagName("ul")[0]; // get the first ul tag on the page
+     var allLinks = ul.getElementsByTagName("a"); // get all the links within that ul
+     for (var i=0; i<allLinks.length; i++) { // iterate through all those links
+      allLinks[i].className = ""; // and assign their class names to nothing
+     }
+     link.className = "selected"; // finally, assign class="selected" to our chosen link
+     var allDivs = document.getElementsByTagName("div");
+     for (var k=0; k<allDivs.length; k++) {
+      allDivs[k].className = "";
+     }
+     var lyricId = link.getAttribute("href").split("#")[1];
+     lyricId = document.getElementById(lyricId);
+     lyricId.className = "on";
+    }
+    </script>
 
     <script type="text/javascript">
     function showTime()
@@ -123,7 +148,7 @@ var imgName = document.all.up_file1.value;
 
 
 </script>
-
+</head>
 
 <body onLoad="showTime()" class="body">
         <form name="timeform" method="POST" action="">
@@ -141,19 +166,33 @@ var imgName = document.all.up_file1.value;
             <!--<h1 class="header">欢迎{{user.Pname}}</h1>-->
 
 
-            <div class="menu_head">
-                <a href="{% url 'myapp:change1' %}" >更改信息</a>
-                <a href="{% url 'myapp:change2' %}">更改密码</a>
-                <a href="{% url 'myapp:logouts' %}" >注销</a>
-            </div>
-
-            <ul class="nav">
-                <li><a href="{% url 'myapp:assess' %}">专业培养评价表</a></li>
-                <li><a href="{% url 'myapp:selfestimate' %}">研究生自我评价表</a></li>
-            </ul>
+                <a  href="{% url 'myapp:change1' %}" class="menu_head1">更改信息</a>
+                <a href="{% url 'myapp:change2' %}" class="menu_head2" >更改密码</a>
+                <a href="{% url 'myapp:logouts' %}" class="menu_head3" >注销</a>
 
 
-        <form method="post" enctype="multipart/form-data">
+<ul class="nav">
+ <!--<li><a onclick="applySelectedTo(this);return false;" href="#heartbreakHotel" class="selected">主页</a></li>-->
+    <li><a onclick="applySelectedTo(this);return false;" href="#Tev" class="selected">首页</a></li>
+    <li><a onclick="applySelectedTo(this);return false;" href="#Stu" >学生互评</a></li>
+    <li><a onclick="applySelectedTo(this);return false;" href="{% url 'myapp:assess' %}">专业培养评价表</a></li>
+    <li><a onclick="applySelectedTo(this);return false;" href="{% url 'myapp:selfestimate' %}">研究生自我评价表</a></li>
+</ul>
+
+<div  id="content">
+ <!--<div class="on" id="heartbreakHotel">-->
+                                <!--<p style="position:absolute;top:250px;left:28%;heoght:50%"><img src="/static/myapp/img/8.jpg" ></p>-->
+
+ <!--</div>-->
+
+ <div id="Stu" >
+         {% for i in student %}
+            <p align="center"><a href="javascript:void(0);" onclick="popupFunc({{i.id}})">{{i}}</a></p>
+         {% endfor %}
+ </div>
+
+ <div class="on" id="Tev"  style=";text-align:center;position:fixer;top:80px;">
+         <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <table align="center" style="position:relative;top:100px;" >
                     <tbody>
@@ -202,6 +241,15 @@ var imgName = document.all.up_file1.value;
                     </td>
                 </tr>
             </table>
+
+ </div>
+
+<div id ="CaseAnalysis" >
+
+</div>
+
+<div id="test"></div>
+</div>
 
 </body>
 </html>

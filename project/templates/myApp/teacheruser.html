@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>{{user.Tid}}</title>
 
-    {% load staticfiles %}
+  {% load staticfiles %}
     <link rel="stylesheet" type="text/css"
           href="{% static '/myapp/css/teacheruser.css' %}">
     <script src="/static/myapp/js/jquery-3.3.1.min.js"></script>
@@ -16,9 +16,8 @@
             }
     </script>
 
-    <!--<script>-->-->
-
-    <script type="text/javascript">
+<!--导航条-->
+    <script>
     function applySelectedTo(link) {
      var ul = document.getElementsByTagName("ul")[0]; // get the first ul tag on the page
      var allLinks = ul.getElementsByTagName("a"); // get all the links within that ul
@@ -35,8 +34,8 @@
      lyricId.className = "on";
     }
     </script>
-
-    <script type="text/javascript">
+<!--时间-->
+    <script>
         function showTime()
         {
             var time = new Date();
@@ -96,8 +95,170 @@
         }
     </script>
 
-</head>
+<!--分页-->
+<!--<script>-->
 
+                <!--&lt;!&ndash;{# 上一页 #}&ndash;&gt;-->
+            <!--function previous(page) {-->
+                <!--page = page-1;-->
+                <!--search(page);-->
+            <!--}-->
+            <!--&lt;!&ndash;{# 下一页 #}&ndash;&gt;-->
+            <!--function next(page) {-->
+                <!--page = page +1;-->
+                <!--search(page);-->
+            <!--}-->
+            <!--&lt;!&ndash;{# 搜索，与按钮点击事件中函数的完全相同 #}&ndash;&gt;-->
+            <!--function search(page) {-->
+                <!--var grade = $("#id_grade").val();                 //获得form中用户输入的grade 注意这里的id_grade 与你html中的id一致-->
+                <!--$.ajax({-->
+                    <!--type:"POST",-->
+                    <!--data: {grade:grade,page:page},-->
+                    <!--url: "{% url 'myapp:comments_upload' %}", //后台处理函数的url 这里用的是static url 需要与urls.py中的name一致-->
+                    <!--cache: false,-->
+                    <!--dataType: "html",-->
+                    <!--success:function (results) {-->
+                <!--html = '<div class="container">';-->
+                <!--if (results['pages']>1){-->
+                    <!--if (results['page']>0){-->
+                        <!--html += '<a id="previous" href="javascript:void(0)" style="background: #000000;color:#ffffff" class="btn btn-default" onmouseover="this.style.background='+"'#ffffff';this.style.color="+"'#000000'"+'" onmouseout="this.style.background='+"'#000000';this.style.color="+"'#ffffff'"+'"  onclick="previous('+results["page"]+')">上一页</a>'-->
+                    <!--}-->
+                    <!--else {-->
+                        <!--html += '<a id="previous" href="javascript:void(0)" class="btn btn-default disabled" onclick="previous('+results["page"]+')">上一页</a>'-->
+                    <!--}-->
+
+                    <!--if (results['page']+1<results['pages']){-->
+                        <!--html += '<a id="next" href="javascript:void(0)"  class="btn btn-default" onmouseover="this.style.background='+"'#000000';this.style.color="+"'#ffffff'"+'" onmouseout="this.style.background='+"'#ffffff';this.style.color="+"'#000000'"+'" onclick="next('+results["page"]+')">下一页</a></div>';-->
+                     <!--}-->
+                    <!--else {-->
+                        <!--html += '<a id="next" href="javascript:void(0)"  class="btn btn-default disabled" onclick="next('+results["page"]+')">下一页</a></div>';-->
+                     <!--}-->
+                <!--}-->
+                <!--$("#nav_btn").html(html);-->
+
+
+
+
+
+                    <!--}-->
+                <!--});-->
+            <!--}-->
+<!--</script>-->
+
+    <!--异步刷新-->
+    <script>
+
+        $(document).ready(function(){
+            $.ajaxSetup({
+                 data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });
+        $('#form1').submit(function(){
+                page = 1;
+                Load();
+
+                })
+
+<!--搜索-->
+            function Load(){
+                var grade = $("#id_grade").val();                 //获得form中用户输入的grade 注意这里的id_grade 与你html中的id一致
+
+                $.ajax({
+                    type:"POST",
+                    data: {grade:grade,page:1},
+                    url: "{% url 'myapp:comments_upload' %}", //后台处理函数的url 这里用的是static url 需要与urls.py中的name一致
+                    cache: false,
+                    dataType: "html",
+                    success: function(data){
+                        render (data)
+
+                    },
+                    error: function(){
+                        alert("false");
+                    }
+                });
+
+        }
+        });
+
+
+<!--分页-->
+            <!--{# 上一页 #}-->
+        function previous(page) {
+            page = page-1;
+            search(page);
+        }
+        <!--{# 下一页 #}-->
+        function next(page) {
+            page = page +1;
+            search(page);
+        }
+        <!--{# 搜索，与按钮点击事件中函数的完全相同 #}-->
+        function search(page) {
+            var grade = $("#id_grade").val();
+            $.ajax({
+                type:"POST",
+                data: {grade:grade,page:page},
+                url: "{% url 'myapp:comments_upload' %}", //后台处理函数的url 这里用的是static url 需要与urls.py中的name一致
+                cache: false,
+                dataType: "html",
+                success:function (data) {
+                    render(data)
+                }
+            });
+        }
+
+
+<!--成功后执行渲染-->
+            function render(data){
+                        var json = eval('('+data+')');
+                        var id = "";
+                        var str = "";
+                        var html = ""
+                        if( json != undefined){
+                            for(var i= 2; i<(json.length);i++){    //遍历data数组
+                                var stem = json[i];
+
+                                str +=  "<tr>"
+                                       + "<td align='center'>"+ "<span>"+ stem[1]+"-"+ "</span>" +"</td>"
+                                       + "<td align='center'>"+ "<span>"+ stem[2]+"-"+ "</span>" +"</td>"
+                                       + "<td align='center'>"+ "<span>"+ stem[3]+"班-"+ "</span>" +"</td>"
+                                       + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "1)'>" + "查看学生专业培养评价"+ "</a>"+ "</td>"
+                                       + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "2)'>" + "查看学生自我评价"+ "</a>"+ "</td>"
+                                       + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "3)'>" + "查看学生作业情况"+ "</a>"+ "</td>"
+                                       + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "4)'>" + "查看学生论文情况"+ "</a>"+ "</td>"
+                                       + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "5)'>" + "教师评分"+ "</a>"+ "</td>"
+                                       + "</tr>";
+                             $("#ul1").html(str); //在html页面id=ul1的标签里显示str内容
+
+                            };
+
+
+                            <!--{# 上一页，下一页 #}-->
+                                if (json[0]>1){
+                                    html += '<a id="previous" href="javascript:void(0)" style="position:relative;top:140px;left:400px;weight:500px;height:30px" class="btn btn-default"   onclick="previous('+ json[0] + ')">上一页</a>'
+                                }
+                                else {
+                                    html += '<a id="previous" href="javascript:void(0)" style="position:relative;top:140px;left:400px;weight:500px;height:30px" class="btn btn-default disabled">上一页</a>'
+                                }
+
+                                if (json[1]){
+                                    html += '<a id="next" href="javascript:void(0)"  class="btn btn-default"  style="position:relative;top:140px;left:450px;weight:500px;height:30px" onclick="next(' + json[0] + ')">下一页</a></div>';
+                                 }
+                                else {
+                                    html += '<a id="next" href="javascript:void(0)" style="position:relative;top:140px;left:450px;weight:500px;height:30px"   class="btn btn-default disabled">下一页</a></div>';
+                                 }
+                            $("#nav_btn").html(html);
+
+
+                        };
+            }
+
+
+
+</script>
+
+</head>
+{{AllUser}}
 
 <body onLoad="showTime()" class="body">
             <div ><img src="/static/myapp/img/4.png" width="100%" height="250px"></div>
@@ -124,8 +285,10 @@
             <!--导航栏-->
 <ul class="nav">
  <!--<li><a onclick="applySelectedTo(this);return false;" href="#heartbreakHotel" class="selected">主页</a></li>-->
- <li><a onclick="applySelectedTo(this);return false;" href="#blueSuedeShoes" class="selected">学生名单</a></li>
- <li><a onclick="applySelectedTo(this);return false;" href="#houndDog">教师评价</a></li>
+  <li><a onclick="applySelectedTo(this);return false;" href="#Tev" class="selected">教师评价</a></li>
+  <li><a onclick="applySelectedTo(this);return false;" href="#Stu" >学生名单</a></li>
+  <li><a onclick="applySelectedTo(this);return false;" href="#CaseAnalysis">案例分析</a></li>
+  <li><a onclick="applySelectedTo(this);return false;" href="#test">测试栏</a> </li>
 </ul>
 <div  id="content">
  <!--<div class="on" id="heartbreakHotel">-->
@@ -133,65 +296,64 @@
 
  <!--</div>-->
 
- <div id="blueSuedeShoes" class="on">
+ <div id="Stu" >
 
-          {% for User in AllUser %}
-                                <p align="center" style="position:relative;top:90px;">
-                                    {{User.Pname}}--{% if User.Pgender %}男{% else %}女{% endif %}--{{User.Pgrade}}班
-                                    <a href="javascript:void(0);" onclick="popupFunc({{User.id}}1)">查看学生专业培养评价</a>
-                                    <a href="javascript:void(0);" onclick="popupFunc({{User.id}}2)">查看学生自我评价</a>
-                                    <a href="javascript:void(0);" onclick="popupFunc({{User.id}}3)">查看学生作业情况</a>
-                                    <a href="javascript:void(0);" onclick="popupFunc({{User.id}}4)">查看学生论文情况</a>
-                                    <a href="javascript:void(0);" onclick="popupFunc({{User.id}}5)">教师评分</a>
-                                </p>
-        {% endfor %}
-
-        <form method="post" id="form1" name="form1">
+        <form method="post" id="form1" name="form1" onsubmit="return false">
             {% csrf_token %}
 
             <table class="submit">
                 <tr>
                     <td><h4>输入查询班级</h4></td>
-                    <td><input type="text" name="grade" id="id_grade"></td>
-                    <td><input type="submit" value="查询"  id="submit"></td>
+                    <td><input type="text"  name="grade" id="id_grade"></td>
+                    <td><input type="submit" value="查询" onclick="" id="submit"></td>
                 </tr>
             </table>
         </form>
 
- </div>
+     <table id="ul1"  style="position:relative;top:100px;left:500px;weight:500px;height:30px"></table>
 
- <div  id="houndDog"  style=";text-align:center;position:relative;top:70px;">
-  <p><a href="javascript:void(0);" onclick="popupFunc({{User.id}}6)" >教师评价综合指标</a></p>
-     <!--导航条显示计算好的表格和综合评价指标-->
-             <table style="margin:0px auto" border="1" width="60%" bgcolor="#e9faff" cellpadding="8" align="center">
-                <tbody>
-                        <tr align="center">
-                            <td>能力指标</td>
-                            <td>原始值</td>
-                            <td>标准化值</td>
-                            <td>判别</td>
-                        </tr>
-                </tbody>
-                <tbody>
-                    {% for i,j,k,l in jieguo %}
-                        <tr align="center">
-                            <td>{{i.targetname}}</td>
-                            <td>{{j}}</td>
-                            <td>{{k}}</td>
-                            <td>{{l}}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-        #可信度
-        <h1>{{Accurcy}}</h1>
+     <nav class="navbar navbar-default navbar-fixed-bottom" id="nav_btn" style="position:absolute;left:400px;right: 58px;margin: 0;padding: 0"></nav>
 
  </div>
+
+    <div class="on" id="Tev"  style=";text-align:center;position:fixer;top:80px;">
+        <p><a href="javascript:void(0);" onclick="popupFunc({{User.id}}6)" >教师评价综合指标</a></p>
+         <!--导航条显示计算好的表格和综合评价指标-->
+                 <table style="margin:0px auto" border="1" width="60%" bgcolor="#e9faff" cellpadding="8" align="center">
+                    <tbody>
+                            <tr align="center">
+                                <td>能力指标</td>
+                                <td>原始值</td>
+                                <td>标准化值</td>
+                                <td>判别</td>
+                            </tr>
+                    </tbody>
+                    <tbody>
+                        {% for i,j,k,l in jieguo %}
+                            <tr align="center">
+                                <td>{{i.targetname}}</td>
+                                <td>{{j}}</td>
+                                <td>{{k}}</td>
+                                <td>{{l}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            #可信度
+            <h1>{{Accurcy}}</h1>
+
+    </div>
+
+    <div id ="CaseAnalysis" >
+
+    </div>
+
+    <div id="test">
+
+    </div>
+
 </div>
-
-
-
 
 </body>
 

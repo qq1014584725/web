@@ -24,3 +24,23 @@
     text-align:center;
 
 }
+.header3{
+    white-space: nowrap;
+    position:absolute;
+    top:50%;
+    width:95%;
+    font-size:50px;
+    font-family:"楷体";
+    text-align:center;
+
+}
+.header4{
+    white-space: nowrap;
+    position:absolute;
+    top:60%;
+    width:95%;
+    font-size:50px;
+    font-family:"楷体";
+    text-align:center;
+
+}

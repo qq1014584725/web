@@ -1,3 +1,103 @@
+
+.menu_head1 {
+    <!--height: 30px;-->
+    line-height: 30px;
+    padding-left: 300px;
+    font-size: 14px;
+
+    <!--border: 1px solid #f1f1f1;-->
+    margin: -22px;
+    position: absolute;
+
+    font-weight: bold;
+    top:51px
+    }
+.menu_head2 {
+    <!--height: 30px;-->
+    line-height: 30px;
+    padding-left: 365px;
+    font-size: 14px;
+
+    <!--border: 1px solid #f1f1f1;-->
+    margin: -22px;
+    position: absolute;
+
+    font-weight: bold;
+    top:51px
+    }
+.menu_head3 {
+    <!--height: 30px;-->
+    line-height: 30px;
+    padding-left: 430px;
+    font-size: 14px;
+
+    <!--border: 1px solid #f1f1f1;-->
+    margin: -22px;
+    position: absolute;
+
+    font-weight: bold;
+    top:51px
+    }
+.submit {
+    position: absolute;
+    margin:-19px;
+    top:300px;
+    right:35px
+
+    }
+
+.wc {
+    position:absolute;
+    margin:0px;
+    top:51px;
+    left:350px;
+    font-size: 14px;
+    <!--color:#0000FF-->
+    }
+
+.body{
+    background-color:rgb(240,255,251);
+    }
+
+.fancybox-lock-test {
+    overflow-y: hidden !important;
+}
+
+
+
+        .nav {
+            overflow: hidden;
+            <!--background-color: #f4f4f4;-->
+        }
+        .nav li {
+            padding: 1px;
+            width: 100%;
+            color: #666;
+            list-style: none;
+            border-left: 1px solid #f4f4f4;
+            cursor: pointer;
+
+
+        }
+        .nav li:hover,.selected {
+            background-image: -webkit-gradient( linear,right top,left bottom,from(palegreen), to(transparent));
+            <!--background-color:#ecebeb;-->
+            border-left: 5px solid #ecebeb;
+            text-align:center;
+
+        }
+        .content{
+            <!--border: 1px solid #f4f4f4;-->
+            height: 1000px;
+            <!--padding: 100px;-->
+            <!--overflow: hidden;-->
+            align:center;
+        }
+
+
+
+
+
         ul {
             white-space: nowrap;
             list-style-type:none;
@@ -20,81 +120,5 @@
         }
 
 
-        .header{
-                height:60px;
-                width:15%;
-                font-size:35px;
-                font-family:"楷体";
-                color: #525252;
-                border: 1px solid #f1f1f1;
-                margin: 0px;
-                font-weight: bold;
-        }
-        <!--.menu_nva1 {-->
-                <!--height:100%;-->
-                <!--margin-top:0px;-->
-                <!--line-height: 40px;-->
-                <!--border-left: 1px solid #51a9f18c;-->
-                <!--color: #fff;-->
-                <!--padding-left: 800px;-->
-                <!--width:15%;-->
-                <!--padding-top: 200px-->
-                <!--}-->
-        <!--.menu_nva2 {-->
-                <!--height:100%;-->
-                <!--margin-top:0px;-->
-                <!--line-height: 40px;-->
-                <!--border-left: 1px solid #51a9f18c;-->
-                <!--color: #fff;-->
-                <!--padding-left: 800px;-->
-                <!--width:15%;-->
-                <!--padding-top: 30px-->
-                <!--}-->
-        .menu_head {
-                white-space: nowrap;
-                height: 30px;
-                line-height: 30px;
-                padding-left: 10px;
-                font-size: 14px;
-                position: absolute;
-                margin: 0px;
-                font-weight: bold;
-                top:45px;
-                left:297px;
-                }
-        .body{
-
-                background-color:rgb(240,255,251);
-                }
-
-                .load-btn {
-                    white-space: nowrap;
-                    }
-							.nav {
-								<!--overflow: hidden;-->
-								<!--background-color: #f4f4f4;-->
-							}
-							.nav li {
-								padding: 5px;
-								width: 217px;
-								color: #666;
-								list-style: none;
-								border-left: 1px solid #f4f4f4;
-								cursor: pointer;
-
-
-							}
-							.nav li:hover,.selected {
-							    background-image: -webkit-gradient( linear,right top,left bottom,from(palegreen), to(transparent));
-								<!--background-color:#ecebeb;-->
-								border-left: 5px solid #ecebeb;
-							    text-align:center;
-
-							}
-							.content{
-								<!--border: 1px solid #f4f4f4;-->
-								height: 1000px;
-								<!--padding: 15px;-->
-								<!--overflow: hidden;-->
-								align:center;
-							}
+#content div { display:none; }
+#content div.on { display:block; }

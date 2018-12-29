@@ -24,10 +24,22 @@ class StudentFactorsvalue3Line(admin.TabularInline):
     classes = ['collapse']
     extra = 0
 
+class PostgraduatesTestLine(admin.TabularInline):
+    model = PostgraduatesTest
+    classes = ['collapse']
+    readonly_fields = ['student_id']
+    extra = 0
+
+class PostgraduatesHomework(admin.TabularInline):
+    model = PostgraduatesHomework
+    classes = ['collapse']
+    readonly_fields = ['student_id']
+    extra = 0
+
 #学生用户管理
 @admin.register(Postgraduates)
 class ContactPostgraduates(admin.ModelAdmin):
-    inlines = [StudentselfAccesstLine, StudentFactorsvalue1Line, StudentFactorsvalue2Line, StudentFactorsvalue3Line]
+    inlines = [PostgraduatesTestLine, PostgraduatesHomework, StudentselfAccesstLine, StudentFactorsvalue1Line, StudentFactorsvalue2Line, StudentFactorsvalue3Line]
 
     def Pid(self):
         return self.Pid
@@ -115,6 +127,35 @@ class ContactTeachers(admin.ModelAdmin):
     list_per_page = 20
 
     fields = ['Tid', 'Tname', 'Tweight', 'Tpassword']
+
+
+#专家用户管理
+@admin.register(Zhuanjia)
+class ContactZhuanjia(admin.ModelAdmin):
+    def Zid(self):
+        return self.Zid
+
+    def Zname(self):
+        return self.Zname
+
+    Zid.short_description = '企业id'
+    Zname.short_description = '企业名称'
+
+    list_display = [Zid, Zname]
+
+#企业用户管理
+@admin.register(Business)
+class ContactBusiness(admin.ModelAdmin):
+    def Bid(self):
+        return self.Bid
+
+    def Bname(self):
+        return self.Bname
+
+    Bid.short_description = '企业id'
+    Bname.short_description = '企业名称'
+
+    list_display = [Bid, Bname]
 
 #/////////////////////////////////////////
 
@@ -317,6 +358,107 @@ class ContactTeachertoStudent(admin.ModelAdmin):
 
     list_per_page = 10
 
-    list_filter = ['teahcers']
+    list_filter = ['teahcers__Tname']
 
     search_fields = ['teahcers__Tname', 'postgraduates__Pname']
+
+
+#装饰器注册学生自评指标控制系统
+@admin.register(StudentselfAccessFactors)
+class ContactStudentselfAccessFactors(admin.ModelAdmin):
+    list_display = ['targetname', 'weight']
+
+    actions_on_top = False
+    actions_on_bottom = True
+
+    list_per_page = 10
+
+    fields = ['targetname', 'weight']
+
+#装饰器注册教师评价指标控制系统
+@admin.register(TeachertoStudentFactors)
+class ContactTeachertoStudentFactors(admin.ModelAdmin):
+    list_display = ['targetname', 'weight']
+
+    actions_on_top = False
+    actions_on_bottom = True
+
+    list_per_page = 10
+
+    fields = ['targetname', 'weight']
+
+#装饰器注册学生互评指标控制系统
+@admin.register(StudenttoStudentFactors)
+class ContactStudenttoStudentFactors(admin.ModelAdmin):
+    list_display = ['targetname', 'weight']
+
+    actions_on_top = False
+    actions_on_bottom = True
+
+    list_per_page = 10
+
+    fields = ['targetname', 'weight']
+
+#装饰器注册专家评价指标控制系统
+@admin.register(ZhuanjiatoStudentFactors)
+class ContactZhuanjiatoStudentFactors(admin.ModelAdmin):
+    list_display = ['targetname', 'weight']
+
+    actions_on_top = False
+    actions_on_bottom = True
+
+    list_per_page = 10
+
+    fields = ['targetname', 'weight']
+
+#装饰器注册单位评价指标控制系统
+@admin.register(BusinesstoStudentFactors)
+class ContactBusinesstoStudentFactors(admin.ModelAdmin):
+    list_display = ['targetname', 'weight']
+
+    actions_on_top = False
+    actions_on_bottom = True
+
+    list_per_page = 10
+
+    fields = ['targetname', 'weight']
+
+#学生互评管理
+@admin.register(StudenttoStudentScore)
+class ContactStudenttoStudentScore(admin.ModelAdmin):
+    list_display = ['himself', 'student', 'targetname', 'score']
+
+    actions_on_top = False
+    actions_on_bottom = True
+
+    list_per_page = 10
+
+    search_fields = ['himself__Pname', 'student__Pname']
+
+#专家评价管理
+@admin.register(ZhuanjiatoStudentScore)
+class ContactZhuanjiatoStudentScore(admin.ModelAdmin):
+    list_display = ['himself', 'student', 'targetname', 'score']
+
+    actions_on_top = False
+    actions_on_bottom = True
+
+    list_per_page = 10
+
+    list_filter = ['himself__Zname']
+
+    search_fields = ['himself__Zname', 'student__Pname']
+
+#企业评价管理
+@admin.register(BusinesstoStudentScore)
+class ContactBusinesstoStudentScore(admin.ModelAdmin):
+    list_display = ['himself', 'student', 'targetname', 'score']
+
+    actions_on_top = False
+    actions_on_bottom = True
+
+    list_per_page = 10
+
+    list_filter = ['himself__Bname']
+
+    search_fields = ['himself__Bname', 'student__Pname']

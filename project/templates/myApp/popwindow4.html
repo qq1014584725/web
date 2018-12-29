@@ -26,7 +26,7 @@
 
         {% for Test in AllTest %}
             <p>
-                <a class="media" href="/static/myapp/upload/{{student.id}}/test/{{Test.name}}">{{Test.name}}</a>
+                <a class="media" href="/upload/{{student.id}}/test/{{Test.name}}">{{Test.name}}</a>
                 <!--<a href="javascript:void(0);" onclick="popupFunc(/{{Test.name}}_{{student.id}}/)">教师评分</a>-->
             </p>
         {% endfor %}
