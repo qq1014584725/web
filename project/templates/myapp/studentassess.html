@@ -5,36 +5,12 @@
     <title>{{user.Pname}}</title>
 </head>
 
-<script>
-    function change1(){
-        var c = 0;
-        var list = document.getElementsByTagName("select");
-        for (var i = 0; i < list.length; i++) {
-            if (list[i].value == "") {
-                c = c + 1;
-                 document.all.btn1.disabled=true;}
-            if (c == 0){
-                document.all.btn1.disabled=false;}
-        }
-        }
-</script>
-<script>
-    function change2(){
-        var c = 0;
-        var list = document.getElementsByTagName("select");
-        for (var i = 0; i < list.length; i++) {
-            if (list[i].value == "") {
-                c = c + 1;
-                 document.all.btn2.disabled=true;}
-            if (c == 0){
-                document.all.btn2.disabled=false;}
-        }
-        }
-</script>
-
-{% load staticfiles %}
+    {% load staticfiles %}
     <link rel="stylesheet" type="text/css"
           href="{% static '/myapp/css/studentassess.css' %}">
+
+    <script src="/static/myapp/js/student_assess1.js"></script>
+    <script src="/static/myapp/js/student_assess2.js"></script>
 
 <body>
 <div class="container">

@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^student/user/selfestimate/$',views.studentselfestimate, name='selfestimate'),
     url(r'^teacher/user/(\d+)/$', views.popwindow, name='popwindow'),
     url(r'^teacher/user/check/$', views.comments_upload, name='comments_upload'),
+    url(r'^check/case/$', views.comments_case, name='comments_case'),
     url(r'^zhuanjia/user/(\d+)$', views.zhuanjiatostudent, name='zhuanjiatostudent'),
     url(r'^danwei/user/(\d+)$', views.danweitostudent, name='danweitostudent'),
 

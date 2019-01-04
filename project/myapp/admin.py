@@ -462,3 +462,12 @@ class ContactBusinesstoStudentScore(admin.ModelAdmin):
     list_filter = ['himself__Bname']
 
     search_fields = ['himself__Bname', 'student__Pname']
+
+class CaseAnalysisLine(admin.TabularInline):
+    model = CaseAnalysis
+    extra = 0
+
+#案例管理
+@admin.register(CaseName)
+class ContactCaseName(admin.ModelAdmin):
+    inlines = [CaseAnalysisLine]

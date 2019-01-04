@@ -198,25 +198,34 @@ def studentuser(request):
                             empt.name = file.name
                             empt.save()
 
-        else:
-            try:
-                document_test = []
-                for i in PostgraduatesTest.objects.filter(student_id=user.id):
-                    document_test.append(i)
-            except:
-                document_test = '学生还未提交论文'
+        try:
+            document_test = []
+            for i in PostgraduatesTest.objects.filter(student_id=user.id):
+                document_test.append(i)
+        except:
+            document_test = '学生还未提交论文'
 
-            try:
-                document_homework = []
-                for i in PostgraduatesHomework.objects.filter(student_id=user.id):
-                    document_homework.append(i)
-            except:
-                document_homework = '学生还未提交作业'
+        try:
+            document_homework = []
+            for i in PostgraduatesHomework.objects.filter(student_id=user.id):
+                document_homework.append(i)
+        except:
+            document_homework = '学生还未提交作业'
 
-            student = []
-            for i in Postgraduates.objects.filter(Pgrade=user.Pgrade):
-                if i.id != user.id:
-                    student.append(i)
+        page_num = request.GET.get('page', 1)
+        student = []
+        for i in Postgraduates.objects.filter(Pgrade=user.Pgrade):
+            if i.id != user.id:
+                student.append(i)
+
+        paginator = Paginator(student, 1)
+        paginator_object = paginator.get_page(page_num)
+        current_page = paginator_object.number
+        page_range = []
+        for i in range(max(1, current_page - 2), current_page):
+            page_range.append(i)
+        for i in range(current_page, min(paginator.num_pages, current_page + 2) + 1):
+            page_range.append(i)
 
         return render(request, 'myapp/studentuser.html', locals())
 
@@ -689,58 +698,49 @@ def teacheruser(request):
     if  request.session.get("username", None):
         username = request.session.get("username")
         user = Teachers.objects.get(Tid=username)
-        if request.method == 'POST':
-            grade = request.POST.get("grade", None)
-            try:
-                grade = int(grade)
-                AllUser = []
-                for j in Postgraduates.objects.filter(Pgrade=grade):
-                    AllUser.append(j)
-            except:
-                pass
-            return render(request, 'myapp/teacheruser.html', locals())
 
-        else:
-            all_zhibiao = []
-            for i in Subtarget.objects.all():
-                all_zhibiao.append(i)
-            professor = []
-            for i in Teachers.objects.all():
-                professor.append(i)
+        all_zhibiao = []
+        for i in Subtarget.objects.all():
+            all_zhibiao.append(i)
+        professor = []
+        for i in Teachers.objects.all():
+            professor.append(i)
 
-            Nomalization = []
-            Ensure = []
-            Inital = []
-            Judge = []
+        Nomalization = []
+        Ensure = []
+        Inital = []
+        Judge = []
 
-            try:
-                for i in all_zhibiao:
-                    score = []
-                    for j in professor:
-                        score.append([j.Tweight, TeacherAccess().__class__.objects.get(targetname=i, teahcers=j).score1, TeacherAccess().__class__.objects.get(targetname=i, teahcers=j).score2])
-                    Nomalization.append(round(ProfessorEvaluate(score)[0], 2))
-                    Ensure.append(round(ProfessorEvaluate(score)[1], 2))
+        try:
+            for i in all_zhibiao:
+                score = []
+                for j in professor:
+                    score.append([j.Tweight, TeacherAccess().__class__.objects.get(targetname=i, teahcers=j).score1, TeacherAccess().__class__.objects.get(targetname=i, teahcers=j).score2])
+                Nomalization.append(round(ProfessorEvaluate(score)[0], 2))
+                Ensure.append(round(ProfessorEvaluate(score)[1], 2))
 
-                High = max(Nomalization)
-                Low = min(Nomalization)
+            High = max(Nomalization)
+            Low = min(Nomalization)
 
-                for i in Nomalization:
-                    Inital.append(round((i - Low) / (High - Low), 2))
+            for i in Nomalization:
+                Inital.append(round((i - Low) / (High - Low), 2))
 
-                for i in Inital:
-                    if i <= 0.3:
-                        Judge.append('删除')
-                    else:
-                        Judge.append('保留')
+            for i in Inital:
+                if i <= 0.3:
+                    Judge.append('删除')
+                else:
+                    Judge.append('保留')
 
-            except:
-                message = '还有老师没评价'
+        except:
+            message = '还有老师没评价'
 
-            Accurcy = 0
-            for item in range(len(Nomalization)):
-                Accurcy = Accurcy + (0.1 * (Nomalization[item] * Ensure[item])) / len(Nomalization)
+        Accurcy = 0
+        for item in range(len(Nomalization)):
+            Accurcy = Accurcy + (0.1 * (Nomalization[item] * Ensure[item])) / len(Nomalization)
 
-            jieguo = zip(all_zhibiao, Nomalization, Inital, Judge)
+        jieguo = zip(all_zhibiao, Nomalization, Inital, Judge)
+
+        AllCase = CaseName.objects.all()
 
         return render(request, 'myapp/teacheruser.html', locals())
 
@@ -887,35 +887,45 @@ def popwindow(request, num):
             return render(request, 'myapp/popwindow1.html', locals())
 
         elif num[-1] == '2':
-            message = '无'
             student = Postgraduates.objects.get(id=num[0:-1])
-            zongzhibiao = Alltarget.objects.all()
-            # 计算有几个大指标和所属小指标的个数
-            Num = 0
-            hang = []
-            for l in zongzhibiao:
-                cishu = 0
-                for n in Subtarget().__class__.objects.filter(alltarget=l):
-                    cishu += 1
-                hang.append(cishu)
-                Num += 1
+            zongzhibiao = []
+            for i in Alltarget.objects.filter(isstudentself=True):
+                zongzhibiao.append(i)
+            xueshengzhibiao = []
 
-            # 将小指标按大指标索引存入2阶list中并整合大指标和小指标
-            zhibiao = []
-            for i in range(Num):
-                zhibiao.append((zongzhibiao[i],Subtarget().__class__.objects.filter(alltarget=zongzhibiao[i]),hang[i]))
+            for i in zongzhibiao:
+                jiyi = []
+                for j in StudentselfAccessFactors.objects.all():
+                    if j.targetname.alltarget == i:
+                        jiyi.append(j)
+                xueshengzhibiao.append(jiyi)
 
-            xianshifen = []
-            for i in range(Num):
-                zuhe = []
-                for j in Subtarget().__class__.objects.filter(alltarget=zongzhibiao[i]):
+            changdu = []
+            for i in xueshengzhibiao:
+                changdu.append(len(i))
+
+            zhibiao = list(zip(zongzhibiao, xueshengzhibiao, changdu))
+
+            zuhe = []
+            for i, j, k in zhibiao:
+                xiaofen = []
+                for z in j:
                     try:
-                        zuhe.append(
-                            (j, StudentselfAccess().__class__.objects.get(targetname=j, postgraduates=student)))
+                        xiaofen.append(StudentselfAccess().__class__.objects.get(targetname=z, postgraduates=student))
                     except:
-                        zuhe.append((j, 0))
+                        xiaofen.append(0)
+                zuhe.append(list(zip(j, xiaofen)))
 
-                xianshifen.append((zongzhibiao[i], zuhe, hang[i]))
+            xianshifen = list(zip(zongzhibiao, zuhe, changdu))
+
+            for i, j, k in xianshifen:
+                for name, fen in j:
+                    if fen != 0:
+                        message = '有'
+                        break
+
+                    if message == '有':
+                        break
 
             message = '无'
             for i, j, k in xianshifen:
@@ -1135,16 +1145,6 @@ def zhuanjiauser(request):
         username = request.session.get("username")
         user = Zhuanjia.objects.get(Zid=username)
 
-        if request.method == 'POST':
-            grade = request.POST.get("grade", None)
-            try:
-                grade = int(grade)
-                AllUser = []
-                for j in Postgraduates.objects.filter(Pgrade=grade):
-                    AllUser.append(j)
-            except:
-                pass
-
         return render(request, 'myapp/zhuanjiauser.html', locals())
 
     else:
@@ -1265,15 +1265,6 @@ def danweiuser(request):
     if request.session.get("username", None):
         username = request.session.get("username")
         user = Business.objects.get(Bid=username)
-        if request.method == 'POST':
-            grade = request.POST.get("grade", None)
-            try:
-                grade = int(grade)
-                AllUser = []
-                for j in Postgraduates.objects.filter(Pgrade=grade):
-                    AllUser.append(j)
-            except:
-                pass
 
         return render(request, 'myapp/danweiuser.html', locals())
 
@@ -1399,16 +1390,39 @@ def  comments_upload(request):
         grade = request.POST.get("grade", None)
         grade = int(grade)
         page = request.POST.get("page", None)
-        Postgraduates.objects.filter(Pgrade=grade)
-        paginator = Paginator(Postgraduates.objects.filter(Pgrade=grade), 10)
-        for j in paginator.get_page(page).object_list:
-            AllUser.append([j.id, j.Pname, j.Pgender, j.Pgrade])
-        AllUser.insert(0, page)
-        AllUser.insert(1,paginator.page(page).has_next())
+        page = int(page)
+
+        if len(Postgraduates.objects.filter(Pgrade=grade)):
+            paginator = Paginator(Postgraduates.objects.filter(Pgrade=grade), 10)
+            page_range = []
+            for j in paginator.get_page(page).object_list:
+                AllUser.append([j.id, j.Pname, j.Pgender, j.Pgrade])
+            for i in range(max(1,page-2), page):
+                page_range.append(i)
+            for i in range(page, min(paginator.num_pages, page+2)+1):
+                page_range.append(i)
+            AllUser.insert(0, page)
+            AllUser.insert(1, paginator.page(page).has_next())
+            AllUser.insert(2, page_range)
+        else:
+            pass
+
         return JsonResponse(AllUser, safe=False)
 
     return JsonResponse(AllUser, safe=False)
 
+def comments_case(request):
+    Case = []
+    if request.method == 'POST':
+        case = request.POST.get("Case", None)
+        case = str(case)
+
+        casename = CaseName.objects.get(casename=case)
+        for i in CaseAnalysis().__class__.objects.filter(attrcase=casename):
+            Case.append(i.name)
+        Case = [[Case], case]
+        return JsonResponse(Case, safe=False)
+    return JsonResponse(Case, safe=False)
 
 def logouts(request):
     request.session.clear()

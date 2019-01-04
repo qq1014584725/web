@@ -7,144 +7,12 @@
   {% load staticfiles %}
     <link rel="stylesheet" type="text/css"
           href="{% static '/myapp/css/teacheruser.css' %}">
+    <link rel="stylesheet" type="text/css"
+          href="/static/myapp/css/fenye.css">
+    <script src="/static/myapp/js/daohangtiao.js"></script>
+    <script src="/static/myapp/js/tanchuan.js"></script>
+    <script src="/static/myapp/js/time_display.js"></script>
     <script src="/static/myapp/js/jquery-3.3.1.min.js"></script>
-
-    <script>
-            function popupFunc(url)
-            {
-                window.open(url, url, "status=1, height:800, width:600, toolbar=0, resizeable=0")
-            }
-    </script>
-
-<!--导航条-->
-    <script>
-    function applySelectedTo(link) {
-     var ul = document.getElementsByTagName("ul")[0]; // get the first ul tag on the page
-     var allLinks = ul.getElementsByTagName("a"); // get all the links within that ul
-     for (var i=0; i<allLinks.length; i++) { // iterate through all those links
-      allLinks[i].className = ""; // and assign their class names to nothing
-     }
-     link.className = "selected"; // finally, assign class="selected" to our chosen link
-     var allDivs = document.getElementsByTagName("div");
-     for (var k=0; k<allDivs.length; k++) {
-      allDivs[k].className = "";
-     }
-     var lyricId = link.getAttribute("href").split("#")[1];
-     lyricId = document.getElementById(lyricId);
-     lyricId.className = "on";
-    }
-    </script>
-<!--时间-->
-    <script>
-        function showTime()
-        {
-            var time = new Date();
-            var year=time.getFullYear();
-            var month=time.getMonth()+1;
-        if(month<10)
-        {
-            month="0"+month;
-        }
-        var day=time.getDate();
-        if(day<10)
-        {
-            day="0"+day;
-        }
-        var hour=time.getHours();
-        if(hour<10)
-        {
-            hour="0"+hour;
-        }
-        var minute=time.getMinutes();
-        if(minute<10)
-        {
-            minute="0"+minute;
-        }
-        var second=time.getSeconds();
-        if(second<10)
-        {
-            second="0"+second;
-        }
-        var wd= time.getDay();
-        switch(wd)
-        {
-            case 0:
-            wd="星期日";
-            break;
-            case 1:
-            wd="星期一";
-            break;
-            case 2:
-            wd="星期二";
-            break;
-            case 3:
-            wd="星期三";
-            break;
-            case 4:
-            wd="星期四";
-            break;
-            case 5:
-            wd="星期五";
-            break;
-            case 6:
-            wd="星期六";
-            break;
-        }
-        document.timeform.timearea.value= year+"年"+month+"月"+day+"日"+" "+wd+" "+hour+":"+ minute+":"+second;
-        setTimeout("showTime()",1000);
-        }
-    </script>
-
-<!--分页-->
-<!--<script>-->
-
-                <!--&lt;!&ndash;{# 上一页 #}&ndash;&gt;-->
-            <!--function previous(page) {-->
-                <!--page = page-1;-->
-                <!--search(page);-->
-            <!--}-->
-            <!--&lt;!&ndash;{# 下一页 #}&ndash;&gt;-->
-            <!--function next(page) {-->
-                <!--page = page +1;-->
-                <!--search(page);-->
-            <!--}-->
-            <!--&lt;!&ndash;{# 搜索，与按钮点击事件中函数的完全相同 #}&ndash;&gt;-->
-            <!--function search(page) {-->
-                <!--var grade = $("#id_grade").val();                 //获得form中用户输入的grade 注意这里的id_grade 与你html中的id一致-->
-                <!--$.ajax({-->
-                    <!--type:"POST",-->
-                    <!--data: {grade:grade,page:page},-->
-                    <!--url: "{% url 'myapp:comments_upload' %}", //后台处理函数的url 这里用的是static url 需要与urls.py中的name一致-->
-                    <!--cache: false,-->
-                    <!--dataType: "html",-->
-                    <!--success:function (results) {-->
-                <!--html = '<div class="container">';-->
-                <!--if (results['pages']>1){-->
-                    <!--if (results['page']>0){-->
-                        <!--html += '<a id="previous" href="javascript:void(0)" style="background: #000000;color:#ffffff" class="btn btn-default" onmouseover="this.style.background='+"'#ffffff';this.style.color="+"'#000000'"+'" onmouseout="this.style.background='+"'#000000';this.style.color="+"'#ffffff'"+'"  onclick="previous('+results["page"]+')">上一页</a>'-->
-                    <!--}-->
-                    <!--else {-->
-                        <!--html += '<a id="previous" href="javascript:void(0)" class="btn btn-default disabled" onclick="previous('+results["page"]+')">上一页</a>'-->
-                    <!--}-->
-
-                    <!--if (results['page']+1<results['pages']){-->
-                        <!--html += '<a id="next" href="javascript:void(0)"  class="btn btn-default" onmouseover="this.style.background='+"'#000000';this.style.color="+"'#ffffff'"+'" onmouseout="this.style.background='+"'#ffffff';this.style.color="+"'#000000'"+'" onclick="next('+results["page"]+')">下一页</a></div>';-->
-                     <!--}-->
-                    <!--else {-->
-                        <!--html += '<a id="next" href="javascript:void(0)"  class="btn btn-default disabled" onclick="next('+results["page"]+')">下一页</a></div>';-->
-                     <!--}-->
-                <!--}-->
-                <!--$("#nav_btn").html(html);-->
-
-
-
-
-
-                    <!--}-->
-                <!--});-->
-            <!--}-->
-<!--</script>-->
-
     <!--异步刷新-->
     <script>
 
@@ -156,9 +24,13 @@
                 page = 1;
                 Load();
 
-                })
+                });
+        $('#form2').submit(function(){
+                Check_case();
 
-<!--搜索-->
+                });
+
+            <!--查学生-->
             function Load(){
                 var grade = $("#id_grade").val();                 //获得form中用户输入的grade 注意这里的id_grade 与你html中的id一致
 
@@ -173,13 +45,33 @@
 
                     },
                     error: function(){
-                        alert("false");
+                        alert("请输入正确班级数字");
                     }
                 });
 
-        }
-        });
+            }
 
+            <!--查案例-->
+            function Check_case(){
+                var Case = $("select[name=casename]").val();                 //获得form中用户输入的grade 注意这里的id_grade 与你html中的id一致
+
+                $.ajax({
+                    type:"POST",
+                    data: {Case:Case},
+                    url: "{% url 'myapp:comments_case' %}", //后台处理函数的url 这里用的是static url 需要与urls.py中的name一致
+                    cache: false,
+                    dataType: "html",
+                    success: function(data){
+                        go (data)
+
+                    },
+                    error: function(){
+                        alert("请选择正确案例");
+                    }
+                });
+            }
+
+        });
 
 <!--分页-->
             <!--{# 上一页 #}-->
@@ -190,6 +82,11 @@
         <!--{# 下一页 #}-->
         function next(page) {
             page = page +1;
+            search(page);
+        }
+        <!--任意一页-->
+        function now(page) {
+            page = page
             search(page);
         }
         <!--{# 搜索，与按钮点击事件中函数的完全相同 #}-->
@@ -215,47 +112,84 @@
                         var str = "";
                         var html = ""
                         if( json != undefined){
-                            for(var i= 2; i<(json.length);i++){    //遍历data数组
-                                var stem = json[i];
+                            if( json.length != 0 ){
+                                for(var i= 3; i<json.length;i++){    //遍历data数组
+                                    var stem = json[i];
 
-                                str +=  "<tr>"
-                                       + "<td align='center'>"+ "<span>"+ stem[1]+"-"+ "</span>" +"</td>"
-                                       + "<td align='center'>"+ "<span>"+ stem[2]+"-"+ "</span>" +"</td>"
-                                       + "<td align='center'>"+ "<span>"+ stem[3]+"班-"+ "</span>" +"</td>"
-                                       + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "1)'>" + "查看学生专业培养评价"+ "</a>"+ "</td>"
-                                       + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "2)'>" + "查看学生自我评价"+ "</a>"+ "</td>"
-                                       + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "3)'>" + "查看学生作业情况"+ "</a>"+ "</td>"
-                                       + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "4)'>" + "查看学生论文情况"+ "</a>"+ "</td>"
-                                       + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "5)'>" + "教师评分"+ "</a>"+ "</td>"
-                                       + "</tr>";
-                             $("#ul1").html(str); //在html页面id=ul1的标签里显示str内容
+                                    str +=  "<tr>"
+                                           + "<td align='center'>"+ "<span>"+ stem[1]+"-"+ "</span>" +"</td>";
+                                    if(stem[2]){
+                                           str += "<td align='center'>"+ "<span>男-"+ "</span>" +"</td>"
+                                    }
+                                    else{
+                                           str += "<td align='center'>"+ "<span>女-"+ "</span>" +"</td>"
+                                    }
+                                    str += "<td align='center'>"+ "<span>"+ stem[3]+"班-"+ "</span>" +"</td>"
+                                           + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "1)'>" + "查看学生专业培养评价"+ "</a>"+ "</td>"
+                                           + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "2)'>" + "查看学生自我评价"+ "</a>"+ "</td>"
+                                           + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "3)'>" + "查看学生作业情况"+ "</a>"+ "</td>"
+                                           + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "4)'>" + "查看学生论文情况"+ "</a>"+ "</td>"
+                                           + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "5)'>" + "教师评分"+ "</a>"+ "</td>"
+                                           + "</tr>";
 
+                                    $("#ul1").html(str); //在html页面id=ul1的标签里显示str内容
+
+                                };
+
+
+                                <!--{# 上一页，下一页 #}-->
+                                 html += '<ul class="pagination" style="background-color:rgb(240,255,251);height:auto;width:auto;">';
+                                    if (json[0]>1){
+                                        html += '<li><a href="javascript:void(0)" class="btn btn-default" onclick="previous(' + json[0] + ')">&laquo;</a></li>';
+                                    }
+                                    else {
+                                        html += '<li><a href="javascript:void(0)" class="btn btn-default disabled">&laquo;</a></li>';
+                                    }
+                                    for(var i= 0; i<(json[2].length);i++){
+                                        if(json[0]==json[2][i]){
+                                            html += '<li class="active"><a href="javascript:void(0)" onclick="now(' + json[2][i] + ')">'+ json[2][i] +'</a></li>'
+                                        }
+                                        else{
+                                            html += '<li><a href="javascript:void(0)" onclick="now(' + json[2][i] + ')">'+ json[2][i] +'</a></li>'
+                                        }
+                                    };
+
+                                    if (json[1]){
+                                        html += '<li><a href="javascript:void(0)" class="btn btn-default" onclick="next(' + json[0] + ')">&raquo;</a></li>';
+                                    }
+                                    else {
+                                        html += '<li><a href="javascript:void(0)" class="btn btn-default disabled">&raquo;</a></li>';
+                                    }
+                                 html += '</ul>';
+
+                                 $("#nav_btn").html(html);
+                            }
+                            else{
+                                str += '没有这个班级';
+                                html = ''
+                                $("#ul1").html(str);
+                                $("#nav_btn").html(html);
                             };
-
-
-                            <!--{# 上一页，下一页 #}-->
-                                if (json[0]>1){
-                                    html += '<a id="previous" href="javascript:void(0)" style="position:relative;top:140px;left:400px;weight:500px;height:30px" class="btn btn-default"   onclick="previous('+ json[0] + ')">上一页</a>'
-                                }
-                                else {
-                                    html += '<a id="previous" href="javascript:void(0)" style="position:relative;top:140px;left:400px;weight:500px;height:30px" class="btn btn-default disabled">上一页</a>'
-                                }
-
-                                if (json[1]){
-                                    html += '<a id="next" href="javascript:void(0)"  class="btn btn-default"  style="position:relative;top:140px;left:450px;weight:500px;height:30px" onclick="next(' + json[0] + ')">下一页</a></div>';
-                                 }
-                                else {
-                                    html += '<a id="next" href="javascript:void(0)" style="position:relative;top:140px;left:450px;weight:500px;height:30px"   class="btn btn-default disabled">下一页</a></div>';
-                                 }
-                            $("#nav_btn").html(html);
-
-
                         };
             }
 
-
+            function go(data){
+                        var json = eval('('+data+')');
+                        var str = "";
+                        if( json != undefined){
+                            str +=  "<tr>";
+                            for(var i=0; i<json[0].length; i++){
+                                str += "<td align='center'>"+ "<a href='/upload/"+ json[1] +"/"+ json[0][i] +"'>" + json[0][i] + "</a>"+ "</td>"
+                            };
+                            str += "</tr>";
+                        };
+                        $("#u22").html(str);
+            }
 
 </script>
+
+
+
 
 </head>
 {{AllUser}}
@@ -283,20 +217,19 @@
 
 
             <!--导航栏-->
-<ul class="nav">
- <!--<li><a onclick="applySelectedTo(this);return false;" href="#heartbreakHotel" class="selected">主页</a></li>-->
-  <li><a onclick="applySelectedTo(this);return false;" href="#Tev" class="selected">教师评价</a></li>
-  <li><a onclick="applySelectedTo(this);return false;" href="#Stu" >学生名单</a></li>
-  <li><a onclick="applySelectedTo(this);return false;" href="#CaseAnalysis">案例分析</a></li>
-  <li><a onclick="applySelectedTo(this);return false;" href="#test">测试栏</a> </li>
-</ul>
+        <ul class="nav">
+         <!--<li><a onclick="applySelectedTo(this);return false;" href="#heartbreakHotel" class="selected">主页</a></li>-->
+            <li><a onclick="applySelectedTo(this);return false;" href="#Tev" class="selected">教师评价</a></li>
+            <li><a onclick="applySelectedTo(this);return false;" href="#Stu" >学生名单</a></li>
+            <li><a onclick="applySelectedTo(this);return false;" href="#CaseAnalysis">案例分析</a></li>
+        </ul>
 <div  id="content">
  <!--<div class="on" id="heartbreakHotel">-->
                                 <!--<p style="position:absolute;top:250px;left:28%;heoght:50%"><img src="/static/myapp/img/8.jpg" ></p>-->
 
  <!--</div>-->
 
- <div id="Stu" >
+ <div id="Stu">
 
         <form method="post" id="form1" name="form1" onsubmit="return false">
             {% csrf_token %}
@@ -310,9 +243,9 @@
             </table>
         </form>
 
-     <table id="ul1"  style="position:relative;top:100px;left:500px;weight:500px;height:30px"></table>
+     <table id="ul1"  style="position:relative;top:100px;left:750px;width:800px;height:35px"></table>
 
-     <nav class="navbar navbar-default navbar-fixed-bottom" id="nav_btn" style="position:absolute;left:400px;right: 58px;margin: 0;padding: 0"></nav>
+     <nav id="nav_btn" style="position:relative;top:120px;left:1000px;width:500px;height:34.5px;"></nav>
 
  </div>
 
@@ -345,12 +278,26 @@
 
     </div>
 
-    <div id ="CaseAnalysis" >
+    <div id ="CaseAnalysis">
+            <form method="post" id="form2" name="form2" onsubmit="return false">
+                {% csrf_token %}
 
-    </div>
+                <table class="submit">
+                    <tr>
+                        <td><h4>选择查找的案例</h4></td>
+                        <td>
+                            <select name="casename"><option></option>
+                                {%for k in AllCase %}
+                                    <option>{{k}}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input type="submit" value="查询" onclick="" id="check"></td>
+                    </tr>
+                </table>
+            </form>
 
-    <div id="test">
-
+        <table id="u22"  style="position:relative;top:100px;left:750px;width:800px;height:35px"></table>
     </div>
 
 </div>

@@ -22,21 +22,20 @@
 
 .footer {
 white-space: nowrap;
-    position: relative; /*相对于父元素contanier定位*/
-    width: 100%;
-    bottom: -50px;/*始终距离它的父元素的底部为0px.则是处于父元素的最底*/
+        position: fixed;
+        width: 100%;
+        bottom: 0px;
+
 }
 
 .footer{
     white-space: nowrap;
-    position:relative;
-    width:100%;
-        	text-align: center;
-            background-color: darkslategrey;
-            color: #fff;
-            font-family: Arial;
-            font-size: 14px;
-            letter-spacing: 1px;
+        text-align: center;
+        background-color: darkslategrey;
+        color: #fff;
+        font-family: Arial;
+        font-size: 14px;
+        letter-spacing: 1px;
 }
 
 .footer span{

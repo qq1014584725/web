@@ -62,6 +62,37 @@ class PostgraduatesHomework(models.Model):
     def __str__(self):
         return self.name
 
+def upload_to3(instance, filename):
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'upload/')
+    return '/'.join([MEDIA_ROOT, instance.attrcase.casename, filename])
+
+#上传案例
+class CaseName(models.Model):
+    casename = models.CharField(max_length=30, verbose_name='案例种类')
+
+    class Meta:
+        db_table = 'myapp_CaseName'  # 数据库名
+        verbose_name = '案例'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '案例管理'  # 修改管理级页面显示
+
+    def __str__(self):
+        return self.casename
+
+class CaseAnalysis(models.Model):
+    case = models.FileField(upload_to=upload_to3, verbose_name='案例')
+    name = models.CharField(max_length=30, verbose_name='文件名')
+
+    attrcase = models.ForeignKey("CaseName", on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'myapp_CaseAnalysis'  # 数据库名
+        verbose_name = '案例'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '案例管理'  # 修改管理级页面显示
+
+    def __str__(self):
+        return self.name
+
 # ////////////////////////////
 
 
@@ -233,7 +264,7 @@ class Alltarget(models.Model):
 
 class Subtarget(models.Model):
     targetname = models.CharField(max_length=30, verbose_name='小指标名称')
-    targetexplain = models.CharField(max_length=50, verbose_name='指标说明')
+    targetextplain = models.CharField(max_length=50, verbose_name='指标说明')
 
     alltarget = models.ForeignKey("Alltarget", on_delete=models.CASCADE, verbose_name='大指标名称')
 

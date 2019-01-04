@@ -17,7 +17,7 @@
                             <tr align="center">
                                 <td align="center" rowspan={{k}}>{{i.targetname}}</td>
                                 {% for xiaofenname,fen in j %}
-                                    <td align="center">{{xiaofenname.targetname}}</td>
+                                    <td align="center" title="{{xiaofenname.targetname.targetextplain}}">{{xiaofenname.targetname}}</td>
                                     <td align="center">
                                         <font color="red">
                                             {{fen.score}}
