@@ -29,18 +29,21 @@
 
 
         .footer {
-            position: fixed;
+
+            position: relative;
             width: 100%;
-            bottom: 0px;
+            bottom: -40px;
         }
 
         .footer{
-            text-align: center;
-            background-color: darkslategrey;
-            color: #fff;
-            font-family: Arial;
-            font-size: 14px;
-            letter-spacing: 1px;
+            position:relative;
+            width:100%;
+                    text-align: center;
+                    background-color: darkslategrey;
+                    color: #fff;
+                    font-family: Arial;
+                    font-size: 14px;
+                    letter-spacing: 1px;
         }
 
         .footer span{
