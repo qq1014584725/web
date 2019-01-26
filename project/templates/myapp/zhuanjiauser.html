@@ -29,7 +29,7 @@
 
 <!--搜索-->
             function Load(){
-                var grade = $("#id_grade").val();                 //获得form中用户输入的grade 注意这里的id_grade 与你html中的id一致
+                var grade = $("select[name=grade]").val();                 //获得form中用户输入的grade 注意这里的id_grade 与你html中的id一致
 
                 $.ajax({
                     type:"POST",
@@ -68,7 +68,7 @@
         }
         <!--{# 搜索，与按钮点击事件中函数的完全相同 #}-->
         function search(page) {
-            var grade = $("#id_grade").val();
+            var grade = $("select[name=grade]").val();
             $.ajax({
                 type:"POST",
                 data: {grade:grade,page:page},
@@ -164,7 +164,13 @@
                 <table class="submit">
                     <tr>
                         <td><h4>输入查询班级</h4></td>
-                        <td><input type="text"  name="grade" id="id_grade"></td>
+                        <td>
+                            <select name="grade"><option></option>
+                                {%for k in AllGrade %}
+                                    <option>{{k}}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
                         <td><input type="submit" value="查询" onclick="" id="submit"></td>
                     </tr>
                 </table>

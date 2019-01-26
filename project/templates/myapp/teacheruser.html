@@ -32,7 +32,7 @@
 
             <!--查学生-->
             function Load(){
-                var grade = $("#id_grade").val();                 //获得form中用户输入的grade 注意这里的id_grade 与你html中的id一致
+                var grade = $("select[name=grade]").val();                 //获得form中用户输入的grade 注意这里的id_grade 与你html中的id一致
 
                 $.ajax({
                     type:"POST",
@@ -91,7 +91,7 @@
         }
         <!--{# 搜索，与按钮点击事件中函数的完全相同 #}-->
         function search(page) {
-            var grade = $("#id_grade").val();
+            var grade = $("select[name=grade]").val();
             $.ajax({
                 type:"POST",
                 data: {grade:grade,page:page},
@@ -130,6 +130,7 @@
                                            + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "3)'>" + "查看学生作业情况"+ "</a>"+ "</td>"
                                            + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "4)'>" + "查看学生论文情况"+ "</a>"+ "</td>"
                                            + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "5)'>" + "教师评分"+ "</a>"+ "</td>"
+                                           + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "7)'>" + "学生总分"+ "</a>"+ "</td>"
                                            + "</tr>";
 
                                     $("#ul1").html(str); //在html页面id=ul1的标签里显示str内容
@@ -189,8 +190,6 @@
 </script>
 
 
-
-
 </head>
 {{AllUser}}
 
@@ -219,9 +218,9 @@
             <!--导航栏-->
         <ul class="nav">
          <!--<li><a onclick="applySelectedTo(this);return false;" href="#heartbreakHotel" class="selected">主页</a></li>-->
-            <li><a onclick="applySelectedTo(this);return false;" href="#Tev" class="selected">教师评价</a></li>
-            <li><a onclick="applySelectedTo(this);return false;" href="#Stu" >学生名单</a></li>
-            <li><a onclick="applySelectedTo(this);return false;" href="#CaseAnalysis">案例分析</a></li>
+            <li><a onclick="applySelectedTo(this);return false;" href="#Tev" class="selected">指标筛选</a></li>
+            <li><a onclick="applySelectedTo(this);return false;" href="#Stu" >专硕指标评价</a></li>
+            <li><a onclick="applySelectedTo(this);return false;" href="#CaseAnalysis">案例指标评价系统</a></li>
         </ul>
 <div  id="content">
  <!--<div class="on" id="heartbreakHotel">-->
@@ -237,20 +236,28 @@
             <table class="submit">
                 <tr>
                     <td><h4>输入查询班级</h4></td>
-                    <td><input type="text"  name="grade" id="id_grade"></td>
+                    <td>
+                            <select name="grade"><option></option>
+                                {%for k in AllGrade %}
+                                    <option>{{k}}</option>
+                                {% endfor %}
+                            </select>
+                    </td>
                     <td><input type="submit" value="查询" onclick="" id="submit"></td>
+
                 </tr>
             </table>
         </form>
 
-     <table id="ul1"  style="position:relative;top:100px;left:750px;width:800px;height:35px"></table>
+     <table id="ul1"  style="position:relative;top:100px;left:750px;width:900px;height:35px"></table>
 
      <nav id="nav_btn" style="position:relative;top:120px;left:1000px;width:500px;height:34.5px;"></nav>
+
 
  </div>
 
     <div class="on" id="Tev"  style=";text-align:center;position:fixer;top:80px;">
-        <p><a href="javascript:void(0);" onclick="popupFunc({{User.id}}6)" >教师评价综合指标</a></p>
+        <p><a href="javascript:void(0);" onclick="popupFunc({{User.id}}6)" >能力指标—集值统计评价筛选</a></p>
          <!--导航条显示计算好的表格和综合评价指标-->
                  <table style="margin:0px auto" border="1" width="60%" bgcolor="#e9faff" cellpadding="8" align="center">
                     <tbody>

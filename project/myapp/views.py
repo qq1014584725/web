@@ -740,6 +740,9 @@ def teacheruser(request):
 
         jieguo = zip(all_zhibiao, Nomalization, Inital, Judge)
 
+        AllGrade = set()
+        for i in Postgraduates.objects.all().values_list('Pgrade'):
+            AllGrade.add(i[0])
         AllCase = CaseName.objects.all()
 
         return render(request, 'myapp/teacheruser.html', locals())
@@ -1116,6 +1119,114 @@ def popwindow(request, num):
 
             return render(request, 'myapp/popwindow6.html', locals())
 
+        elif num[-1] == '7':
+            student = Postgraduates.objects.get(id=num[0:-1])
+
+            zongzhibiao = []
+            for i in Alltarget.objects.all():
+                zongzhibiao.append(i)
+
+            width = []
+            zongjiyi = []
+            xiaozhibiao_name = []
+            for item in Alltarget.objects.all():
+                xiaojiyi = []
+                wid = 0
+
+                for j in Subtarget.objects.filter(alltarget=item):
+                    wid += 1
+                    xiaozhibiao = []
+                    tips_rember = {}
+
+                    if item.isstudentself:
+                        Objects = []
+                        for i in StudentselfAccess().__class__.objects.filter(targetname=StudentselfAccessFactors.objects.get(targetname=j), postgraduates=student):
+                            #计算次学生单项指标的自评打分X权重
+                            Objects.append(i.score * i.targetname.weight)
+                            #记录学生自评分数
+                            tips_rember["学生自评-" + str(i.postgraduates)] = i.score
+
+                        if Objects:
+                            xiaozhibiao.append(sum(Objects)/len(Objects))
+                        else:
+                            xiaozhibiao.append(0)
+
+                    if item.isstudenttostudent:
+                        Objects = []
+                        for i in StudenttoStudentScore().__class__.objects.filter(targetname=StudenttoStudentFactors.objects.get(targetname=j), student=student):
+                            #计算次学生单项指标的自评打分X权重
+                            Objects.append(i.score * i.targetname.weight)
+                            # 记录学生次项指标其他人的全部打分
+                            if i.score:
+                                tips_rember["学生互评-"+str(i.himself)] = i.score
+
+                        if Objects:
+                            xiaozhibiao.append(sum(Objects)/len(Objects))
+                        else:
+                            xiaozhibiao.append(0)
+
+                    if item.isteachertostudent:
+                        Objects = []
+                        for i in TeachertoStudent().__class__.objects.filter(targetname=TeachertoStudentFactors.objects.get(targetname=j), postgraduates=student):
+                            # 计算次学生单项指标的自评打分X权重
+                            Objects.append(i.score * i.targetname.weight)
+                            # 记录学生次项指标其他人的全部打分
+                            if i.score:
+                                tips_rember["教师评价-"+str(i.teahcers)] = i.score
+
+                        if Objects:
+                            xiaozhibiao.append(sum(Objects)/len(Objects))
+                        else:
+                            xiaozhibiao.append(0)
+
+                    if item.iszhuanjiatostudnet:
+                        Objects = []
+                        for i in ZhuanjiatoStudentScore().__class__.objects.filter(targetname=ZhuanjiatoStudentFactors.objects.get(targetname=j), student=student):
+                            # 计算次学生单项指标的自评打分X权重
+                            Objects.append(i.score * i.targetname.weight)
+                            # 记录学生次项指标其他人的全部打分
+                            if i.score:
+                                tips_rember["专家评价-"+str(i.himself)] = i.score
+
+                        if Objects:
+                            xiaozhibiao.append(sum(Objects)/len(Objects))
+                        else:
+                            xiaozhibiao.append(0)
+
+                    if item.isbusinesstostudnet:
+                        Objects = []
+                        for i in BusinesstoStudentScore().__class__.objects.filter(targetname=BusinesstoStudentFactors.objects.get(targetname=j), student=student):
+                            # 计算次学生单项指标的自评打分X权重
+                            Objects.append(i.score * i.targetname.weight)
+                            # 记录学生次项指标其他人的全部打分
+                            if i.score:
+                                tips_rember["用人单位评价-"+str(i.himself)] = i.score
+
+                        if Objects:
+                            xiaozhibiao.append(sum(Objects)/len(Objects))
+                        else:
+                            xiaozhibiao.append(0)
+
+                    g = []
+                    zong_weight = item.weight
+                    zong_weight = zong_weight.split(',')
+                    xiao_zong_fen = 0
+                    ggg = zip(zong_weight,xiaozhibiao)
+                    for i in range(len(zong_weight)):
+                        xiao_zong_fen += float(zong_weight[i]) * xiaozhibiao[i]
+
+                    xiaojiyi.append((j.targetname, round(xiao_zong_fen, 2), tips_rember))
+
+                width.append(wid)
+                zongjiyi.append(xiaojiyi)
+
+            result = zip(zongzhibiao,zongjiyi,width)
+
+            return render(request, 'myapp/popwindow7.html', locals())
+
+    else:
+        return redirect('/teacher/')
+
 def zhuanjialogin(request):
     message = ""
     if request.method == 'POST':
@@ -1144,6 +1255,10 @@ def zhuanjiauser(request):
     if request.session.get("username", None):
         username = request.session.get("username")
         user = Zhuanjia.objects.get(Zid=username)
+
+        AllGrade = set()
+        for i in Postgraduates.objects.all().values_list('Pgrade'):
+            AllGrade.add(i[0])
 
         return render(request, 'myapp/zhuanjiauser.html', locals())
 
@@ -1265,6 +1380,10 @@ def danweiuser(request):
     if request.session.get("username", None):
         username = request.session.get("username")
         user = Business.objects.get(Bid=username)
+
+        AllGrade = set()
+        for i in Postgraduates.objects.all().values_list('Pgrade'):
+            AllGrade.add(i[0])
 
         return render(request, 'myapp/danweiuser.html', locals())
 
@@ -1389,7 +1508,7 @@ def  comments_upload(request):
     if request.method == 'POST':
         grade = request.POST.get("grade", None)
         grade = int(grade)
-        page = request.POST.get("page", None)
+        page = request.POST.get("page", 1)
         page = int(page)
 
         if len(Postgraduates.objects.filter(Pgrade=grade)):

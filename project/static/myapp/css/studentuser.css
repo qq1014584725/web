@@ -1,5 +1,6 @@
 
 .menu_head1 {
+    white-space: nowrap;
     <!--height: 30px;-->
     line-height: 30px;
     padding-left: 300px;
@@ -13,6 +14,7 @@
     top:51px
     }
 .menu_head2 {
+    white-space: nowrap;
     <!--height: 30px;-->
     line-height: 30px;
     padding-left: 365px;
@@ -26,6 +28,7 @@
     top:51px
     }
 .menu_head3 {
+    white-space: nowrap;
     <!--height: 30px;-->
     line-height: 30px;
     padding-left: 430px;

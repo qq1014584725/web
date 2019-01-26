@@ -278,8 +278,8 @@ class Subtarget(models.Model):
 
 
 class TeacherAccess(models.Model):
-    score1 = models.IntegerField(verbose_name='分数1', null=True)
-    score2 = models.IntegerField(verbose_name='分数2', null=True)
+    score1 = models.FloatField(verbose_name='分数1', null=True)
+    score2 = models.FloatField(verbose_name='分数2', null=True)
 
     targetname = models.ForeignKey("Subtarget", on_delete=models.CASCADE, verbose_name='小指标')
     teahcers = models.ForeignKey("Teachers", on_delete=models.CASCADE)
@@ -309,7 +309,7 @@ class StudentselfAccessFactors(models.Model):
         return self.targetname.targetname
 #学生自评分数
 class StudentselfAccess(models.Model):
-    score = models.IntegerField(verbose_name='小指标分数', null=True)
+    score = models.FloatField(verbose_name='小指标分数', null=True)
 
     targetname = models.ForeignKey("StudentselfAccessFactors",  verbose_name='所属小指标', on_delete=models.CASCADE)
     postgraduates = models.ForeignKey("Postgraduates", on_delete=models.CASCADE)
@@ -337,7 +337,7 @@ class TeachertoStudentFactors(models.Model):
         return self.targetname.targetname
 #教师评价分数
 class TeachertoStudent(models.Model):
-    score = models.IntegerField(verbose_name='分数', null=True)
+    score = models.FloatField(verbose_name='分数', null=True)
 
     targetname = models.ForeignKey("TeachertoStudentFactors", on_delete=models.CASCADE, verbose_name='指标名称')
     teahcers = models.ForeignKey("Teachers", on_delete=models.CASCADE, verbose_name='教师名称')
@@ -367,7 +367,7 @@ class StudenttoStudentFactors(models.Model):
 
 #学生互评分数
 class StudenttoStudentScore(models.Model):
-    score = models.IntegerField(verbose_name='分数', null=True)
+    score = models.FloatField(verbose_name='分数', null=True)
 
     targetname = models.ForeignKey("StudenttoStudentFactors", on_delete=models.CASCADE, verbose_name='指标名称')
     himself = models.ForeignKey("Postgraduates", on_delete=models.CASCADE, verbose_name='用户名称', related_name='user')
@@ -397,7 +397,7 @@ class ZhuanjiatoStudentFactors(models.Model):
         return self.targetname.targetname
 #专家评价分数
 class ZhuanjiatoStudentScore(models.Model):
-    score = models.IntegerField(verbose_name='分数', null=True)
+    score = models.FloatField(verbose_name='分数', null=True)
 
     targetname = models.ForeignKey("ZhuanjiatoStudentFactors", on_delete=models.CASCADE, verbose_name='指标名称')
     himself = models.ForeignKey("Zhuanjia", on_delete=models.CASCADE, verbose_name='专家名称')
@@ -426,7 +426,7 @@ class BusinesstoStudentFactors(models.Model):
         return self.targetname.targetname
 #用人单位评价分数
 class BusinesstoStudentScore(models.Model):
-    score = models.IntegerField(verbose_name='分数', null=True)
+    score = models.FloatField(verbose_name='分数', null=True)
 
     targetname = models.ForeignKey("BusinesstoStudentFactors", on_delete=models.CASCADE, verbose_name='指标名称')
     himself = models.ForeignKey("Business", on_delete=models.CASCADE, verbose_name='单位名称')

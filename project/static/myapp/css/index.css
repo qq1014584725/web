@@ -4,6 +4,17 @@
     padding:3px;/*设置距顶点的距离设置为3*/
 
 }
+.title{
+    color: black;
+    white-space: nowrap;
+    position:absolute;
+    top:15%;
+    width:95%;
+    font-size:50px;
+    font-family:"楷体";
+    text-align:center;
+
+}
 .header1{
     white-space: nowrap;
     position:absolute;

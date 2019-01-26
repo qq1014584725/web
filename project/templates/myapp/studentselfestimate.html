@@ -18,10 +18,10 @@
     <a href="{% url 'myapp:studentuser' %}" >返回用户</a>
     <a href="{% url 'myapp:selfestimate' %}" >返回评价</a>
 
-    <h1 class="header">研究生自评表</h1>
+    <h1 class="header">能力指标自我评价</h1>
     <hr size="1" noshade="noshade" width="100%">
     <div class="zhushi">
-        *请输入整数1-10，10为很好
+        *请输入整数1-10，最高值为10
     </div>
 
     <form method="post" style="white-space: nowrap;" id="allow" action="" onsubmit="return checkForm">
@@ -36,7 +36,7 @@
                     <td align="center" rowspan={{k}}>{{i.targetname}}</td>
                     {% for xiaozhibiao in j %}
                         <td align="center" title="{{xiaozhibiao.targetname.targetextplain}}">{{xiaozhibiao.targetname}}</td>
-                        <td align="center"><input type="text" onchange="kp1(this),judge1()"  maxlength="2" name={{xiaozhibiao.targetname}} /></td>
+                        <td align="center"><input type="text" onchange="kp1(this),judge1()"  maxlength="3" name={{xiaozhibiao.targetname}} /></td>
                 </tr>
                     {% endfor %}
         </tbody>
@@ -84,7 +84,7 @@
                             </font>
                         </td>
                         <td align="center">
-                                <input onchange="kp2(this),judge2()" maxlength="2" type="text" name={{xiaozhibiao.targetname}} value={{fen.score}} >
+                                <input onchange="kp2(this),judge2()" maxlength="3" type="text" name={{xiaozhibiao.targetname}} value={{fen.score}} >
                         </td>
                 </tr>
                     {% endfor %}

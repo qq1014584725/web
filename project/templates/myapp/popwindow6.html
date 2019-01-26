@@ -18,7 +18,7 @@
         <hr size="1" noshade="noshade" width="100%">
 
         <div class="zhushi">
-            *可输入整数、小数、10为很好
+            *可输入整数、小数、最高值为10
         </div>
 
         <form method="post" id="allow" action="">
@@ -32,7 +32,7 @@
                                 <td align="center" rowspan={{k}}>{{i.targetname}}</td>
                                 {% for xiaozhibiao in j %}
                                     <td align="center" title="{{xiaozhibiao.targetextplain}}">{{xiaozhibiao.targetname}}</td>
-                                    <td align="center"><input type="text" onchange="kp1(this),judge1()" maxlength="2" name={{xiaozhibiao.targetname}}1 />-<input type="text" onchange="kp1(this),judge1()" maxlength="2" name={{xiaozhibiao.targetname}}2 /></td>
+                                    <td align="center"><input type="text" onchange="kp1(this),judge1()" maxlength="3" name={{xiaozhibiao.targetname}}1 />-<input type="text" onchange="kp1(this),judge1()" maxlength="3" name={{xiaozhibiao.targetname}}2 /></td>
                             </tr>
                                 {% endfor %}
                     </tbody>
@@ -87,7 +87,7 @@
                                             {{fen.score2}}
                                         </font>
                                     </td>
-                                    <td align="center"><input type="text" onchange="kp2(this),judge2()" maxlength="2" name={{xiaozhibiao.targetname}}1 value={{fen.score1}}>-<input type="text" onchange="kp2(this),judge2()" maxlength="2" name={{xiaozhibiao.targetname}}2 value={{fen.score2}}></td>
+                                    <td align="center"><input type="text" onchange="kp2(this),judge2()" maxlength="3" name={{xiaozhibiao.targetname}}1 value={{fen.score1}}>-<input type="text" onchange="kp2(this),judge2()" maxlength="3" name={{xiaozhibiao.targetname}}2 value={{fen.score2}}></td>
                             </tr>
                                 {% endfor %}
                     </tbody>

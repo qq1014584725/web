@@ -1,6 +1,6 @@
  function kp2(txt){
             <!--var kp = function(txt){-->
-                if(!/^([1-9]|10)$/.test(txt.value)){
+                if(!/^([1-9]([.][0-9])*|10)$/.test(txt.value)){
                     txt.style.borderColor = "red";
                     s = txt.value * 1;
                     <!--return false;-->
@@ -24,7 +24,7 @@
                         if(s == "-11"){
                                 <!--return turn;-->
                                 var list = document.getElementsByTagName("input");
-                                var regexp1 = /^([1-9]|10)$/;
+                                var regexp1 = /^([1-9]([.][0-9])*|10)$/;
                                 for (var i = 0; i < list.length; i++) {
                                 // 判断是否为文本框
                                     if (list[i].type == "text") {
