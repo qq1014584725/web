@@ -54,7 +54,7 @@
 
  <!--</div>-->
 
- <div class="on" id="Stu" style="position:relative;top:50px;left:600px;width:500px;height:34.5px;">
+ <div class="on" id="Stu" style="position:relative;top:50px;left:600px;width:500px;height:1000px;">
          {% for i in paginator_object.object_list %}
             <p style="position:relative;top:5px;left:100px;width:500px;height:34.5px;">
                 <a href="javascript:void(0);" onclick="popupFunc({{i.id}}1)">{{i}}打分</a>
@@ -62,7 +62,7 @@
             </p>
          {% endfor %}
 
-        <ul class="pagination" style="background-color:rgb(240,255,251);height:auto;width:auto;left:700px;">
+        <ul class="pagination" style="background-color:rgb(240,255,251);height:auto;width:auto;position:relative;top20px;left:90px;">
             {% if paginator_object.has_previous %}
                 <li>
                     <a href="?page={{paginator_object.previous_page_number}}" aria-label="Previous">
