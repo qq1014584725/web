@@ -178,11 +178,16 @@
                         var json = eval('('+data+')');
                         var str = "";
                         if( json != undefined){
-                            str +=  "<tr>";
+
+                            str += "<tr>"
+                                 + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc(" + json[2] + "8)'>案例评价</a>"+ "</td>"
+                                 + "</tr>";
+
                             for(var i=0; i<json[0].length; i++){
-                                str += "<td align='center'>"+ "<a href='/upload/"+ json[1] +"/"+ json[0][i] +"'>" + json[0][i] + "</a>"+ "</td>"
+                                str += "<tr>"
+                                     + "<td align='center'>"+ "<a href='/upload/"+ json[1] +"/"+ json[0][i] +"' target='_blank'>" + json[0][i] + "</a>"+ "</td>"
+                                     + "</tr>"
                             };
-                            str += "</tr>";
                         };
                         $("#u22").html(str);
             }
@@ -191,7 +196,6 @@
 
 
 </head>
-{{AllUser}}
 
 <body onLoad="showTime()" class="body">
             <div ><img src="/static/myapp/img/4.png" width="100%" height="250px"></div>
@@ -228,38 +232,38 @@
 
  <!--</div>-->
 
- <div id="Stu">
+     <div id="Stu">
 
-        <form method="post" id="form1" name="form1" onsubmit="return false">
-            {% csrf_token %}
+            <form method="post" id="form1" name="form1" onsubmit="return false">
+                {% csrf_token %}
 
-            <table class="submit">
-                <tr>
-                    <td><h4>输入查询班级</h4></td>
-                    <td>
-                            <select name="grade"><option></option>
-                                {%for k in AllGrade %}
-                                    <option>{{k}}</option>
-                                {% endfor %}
-                            </select>
-                    </td>
-                    <td><input type="submit" value="查询" onclick="" id="submit"></td>
+                <table class="submit">
+                    <tr>
+                        <td><h4>输入查询班级</h4></td>
+                        <td>
+                                <select name="grade"><option></option>
+                                    {%for k in AllGrade %}
+                                        <option>{{k}}</option>
+                                    {% endfor %}
+                                </select>
+                        </td>
+                        <td><input type="submit" value="查询" onclick="" id="submit"></td>
 
-                </tr>
-            </table>
-        </form>
+                    </tr>
+                </table>
+            </form>
 
-     <table id="ul1"  style="position:relative;top:100px;left:750px;width:900px;height:35px"></table>
+         <table id="ul1"  style="position:relative;top:100px;left:300px;width:900px;height:35px"></table>
 
-     <nav id="nav_btn" style="position:relative;top:120px;left:1000px;width:500px;height:34.5px;"></nav>
+         <nav id="nav_btn" style="position:relative;top:120px;left:700px;width:500px;height:34.5px;"></nav>
 
 
- </div>
+     </div>
 
-    <div class="on" id="Tev"  style=";text-align:center;position:fixer;top:80px;">
+    <div class="on" id="Tev"  style="text-align:center;position:fixer;top:10px;">
         <p><a href="javascript:void(0);" onclick="popupFunc({{User.id}}6)" >能力指标—集值统计评价筛选</a></p>
          <!--导航条显示计算好的表格和综合评价指标-->
-                 <table style="margin:0px auto" border="1" width="60%" bgcolor="#e9faff" cellpadding="8" align="center">
+                 <table style="margin:0px auto;" border="1" width="60%" bgcolor="#e9faff" cellpadding="8" align="center">
                     <tbody>
                             <tr align="center">
                                 <td>能力指标</td>
@@ -281,7 +285,7 @@
                 </table>
 
             #可信度
-            <h1>{{Accurcy}}</h1>
+            <h2>{{Accurcy}}</h2>
 
     </div>
 
@@ -304,7 +308,7 @@
                 </table>
             </form>
 
-        <table id="u22"  style="position:relative;top:100px;left:750px;width:800px;height:35px"></table>
+        <table id="u22"  style="position:relative;top:100px;left:350px;width:800px;height:35px"></table>
     </div>
 
 </div>

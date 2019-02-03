@@ -2,17 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>得分情况</title>
 </head>
 <body>
+    <h1 align="center">学生总分情况</h1>
+    <h6 align="center">光标停留可查看详情</h6>
     <table style="margin:0px auto" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
-        {% for i,j,k in result %}
+        <tbody>
+            <tr align="center">
+                <td align="center">大指标</td>
+                <td align="center">大指标总得分</td>
+                <td align="center">小指标</td>
+                <td align="center">小指标总得分</td>
+            </tr>
+        </tbody>
+        {% for i,z,j,k in result %}
             <tbody>
                     <tr align="center">
                         <td align="center" rowspan={{k}}>{{i}}</td>
-                        {% for name,fen,tips in j %}
-                            <td align="center">{{name}}</td>
-                            <td align="center" title="'{{tips}}'">{{fen}}</td>
+                        <td align="center" rowspan={{k}}>{{z}}</td>
+                        {% for name,fen,tips,option in j %}
+                            <td align="center" title="{{option}}">{{name}}</td>
+                            <td align="center" title="{{tips}}">{{fen}}</td>
                     </tr>
                         {% endfor %}
             </tbody>

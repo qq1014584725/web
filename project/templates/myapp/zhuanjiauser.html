@@ -93,7 +93,8 @@
                                 var stem = json[i];
 
                                 str +=  "<tr>"
-                                       + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ ")'>" + stem[1] + "</a>"+ "</td>"
+                                       + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "1)'>" + stem[1] + "打分</a>"+ "</td>"
+                                       + "<td align='center'>"+ "<a href='javascript:void(0)' onclick='popupFunc("+ stem[0]+ "2)'>" + stem[1] + "总分</a>"+ "</td>"
                                        + "</tr>";
                              $("#ul1").html(str); //在html页面id=ul1的标签里显示str内容
 
@@ -101,7 +102,7 @@
 
 
                             <!--{# 上一页，下一页 #}-->
-                                html += '<ul class="pagination" style="background-color:rgb(240,255,251);height:auto;width:auto;left:1075px;">';
+                                html += '<ul class="pagination" style="background-color:rgb(240,255,251);height:auto;width:auto;left:620px;">';
                                     if (json[0]>1){
                                         html += '<li><a href="javascript:void(0)" class="btn btn-default" onclick="previous(' + json[0] + ')">&laquo;</a></li>';
                                     }
@@ -178,7 +179,7 @@
 
             <table id="ul1" align="center" style="position:relative;top:100px;"></table>
 
-            <div id="nav_btn" align="center" style="position:relative;top:120px;"></div>
+            <div id="nav_btn" align="center" style="position:relative;top:120px"></div>
         </div>
 
 

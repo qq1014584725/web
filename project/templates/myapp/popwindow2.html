@@ -6,12 +6,20 @@
 </head>
 <body>
         <h1 align="center">{{student.Pname}}自我评价</h1>
+        <h6 align="center">光标停留可查看详情</h6>
 
         {% if message == "无" %}
             <h1 align="center">{{message}}</h1>
         {% else %}
 
             <table style="margin:0px auto;margin-bottom:100px" align="center" border="1" width="60%" bgcolor="#e9faff" cellpadding="8">
+                <tbody>
+                    <tr align="center">
+                        <td align="center">大指标</td>
+                        <td align="center">小指标</td>
+                        <td align="center">自评分数</td>
+                    </tr>
+                </tbody>
                 {% for i,j,k in xianshifen %}
                     <tbody>
                             <tr align="center">

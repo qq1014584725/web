@@ -252,6 +252,7 @@ class Alltarget(models.Model):
     isteachertostudent = models.BooleanField(default=True, verbose_name='教师评价')
     iszhuanjiatostudnet = models.BooleanField(default=True, verbose_name='专家评价')
     isbusinesstostudnet = models.BooleanField(default=True, verbose_name='企业评价')
+    isteachertocase = models.BooleanField(default=True, verbose_name='案例评分')
     weight = models.CharField(max_length=30, verbose_name='各级权重')
 
     class Meta:
@@ -340,7 +341,7 @@ class TeachertoStudent(models.Model):
     score = models.FloatField(verbose_name='分数', null=True)
 
     targetname = models.ForeignKey("TeachertoStudentFactors", on_delete=models.CASCADE, verbose_name='指标名称')
-    teahcers = models.ForeignKey("Teachers", on_delete=models.CASCADE, verbose_name='教师名称')
+    teachers = models.ForeignKey("Teachers", on_delete=models.CASCADE, verbose_name='教师名称')
     postgraduates = models.ForeignKey("Postgraduates", on_delete=models.CASCADE, verbose_name='学生名称')
 
     class Meta:
@@ -436,6 +437,36 @@ class BusinesstoStudentScore(models.Model):
         db_table = 'myapp_BusinesstoStudentScore'  # 数据库名
         verbose_name = '企业评分分数'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
         verbose_name_plural = '企业评价分数管理'  # 修改管理级页面显示
+
+    def __str__(self):
+        return self.targetname.targetname.targetname
+
+
+# 案例评价指标
+class CaseFactors(models.Model):
+    targetname = models.OneToOneField("Subtarget", on_delete=models.CASCADE, verbose_name='案例评价指标')
+
+    class Meta:
+        db_table = 'myapp_CaseFactors'  # 数据库名
+        verbose_name = '案例评价指标'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '案例评价指标管理'  # 修改管理级页面显示
+
+
+    def __str__(self):
+        return self.targetname.targetname
+
+# 案例评分
+class CaseScore(models.Model):
+    score = models.FloatField(verbose_name='分数', null=True)
+
+    targetname = models.ForeignKey("CaseFactors", on_delete=models.CASCADE, verbose_name='指标名称')
+    case = models.ForeignKey("CaseName", on_delete=models.CASCADE, verbose_name='案例名称')
+    teacher = models.ForeignKey("Teachers", on_delete=models.CASCADE, verbose_name='教师名称')
+
+    class Meta:
+        db_table = 'myapp_CaseScore'  # 数据库名
+        verbose_name = '案例评分分数'  # 修改从管理级'产品中心'进入后的页面显示，显示为'产品'
+        verbose_name_plural = '案例评价分数管理'  # 修改管理级页面显示
 
     def __str__(self):
         return self.targetname.targetname.targetname

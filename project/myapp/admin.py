@@ -138,8 +138,8 @@ class ContactZhuanjia(admin.ModelAdmin):
     def Zname(self):
         return self.Zname
 
-    Zid.short_description = '企业id'
-    Zname.short_description = '企业名称'
+    Zid.short_description = '专家id'
+    Zname.short_description = '专家姓名'
 
     list_display = [Zid, Zname]
 
@@ -351,16 +351,16 @@ class ContactSub3Factors(admin.ModelAdmin):
 #装饰器注册老师给学生打分的系统
 @admin.register(TeachertoStudent)
 class ContactTeachertoStudent(admin.ModelAdmin):
-    list_display = ['teahcers', 'postgraduates', 'targetname', 'score']
+    list_display = ['teachers', 'postgraduates', 'targetname', 'score']
 
     actions_on_top = False
     actions_on_bottom = True
 
     list_per_page = 10
 
-    list_filter = ['teahcers__Tname']
+    list_filter = ['teachers__Tname']
 
-    search_fields = ['teahcers__Tname', 'postgraduates__Pname']
+    search_fields = ['teachers__Tname', 'postgraduates__Pname']
 
 
 #装饰器注册学生自评指标控制系统
@@ -471,3 +471,29 @@ class CaseAnalysisLine(admin.TabularInline):
 @admin.register(CaseName)
 class ContactCaseName(admin.ModelAdmin):
     inlines = [CaseAnalysisLine]
+
+#案例指标管理
+@admin.register(CaseFactors)
+class ContactCaseFactors(admin.ModelAdmin):
+    list_display = ['targetname']
+
+    actions_on_top = False
+    actions_on_bottom = True
+
+    list_per_page = 10
+
+    fields = ['targetname']
+
+#案例评分管理
+@admin.register(CaseScore)
+class ContactCaseScore(admin.ModelAdmin):
+    list_display = ['case', 'teacher', 'targetname', 'score']
+
+    actions_on_top = False
+    actions_on_bottom = True
+
+    list_per_page = 10
+
+    list_filter = ['case__casename']
+
+    search_fields = ['case__casename', 'teacher__Tname']

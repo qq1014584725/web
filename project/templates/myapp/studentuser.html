@@ -45,6 +45,7 @@
     <li><a onclick="applySelectedTo(this);return false;" href="#Tev">提交论文和作业</a></li>
     <li><a onclick="applySelectedTo(this);return false;" href="{% url 'myapp:assess' %}">主观指标评价</a></li>
     <li><a onclick="applySelectedTo(this);return false;" href="{% url 'myapp:selfestimate' %}">能力指标自我评价</a></li>
+    <li><a onclick="applySelectedTo(this);return false;" href="{% url 'myapp:student_score' %}">学生总分查询</a></li>
 </ul>
 
 <div  id="content">
@@ -53,12 +54,15 @@
 
  <!--</div>-->
 
- <div class="on" id="Stu" style="position:relative;top:120px;left:1000px;width:500px;height:34.5px;">
+ <div class="on" id="Stu" style="position:relative;top:50px;left:600px;width:500px;height:34.5px;">
          {% for i in paginator_object.object_list %}
-            <p style="position:relative;top:5px;left:100px;width:500px;height:34.5px;"><a href="javascript:void(0);" onclick="popupFunc({{i.id}})">{{i}}</a></p>
+            <p style="position:relative;top:5px;left:100px;width:500px;height:34.5px;">
+                <a href="javascript:void(0);" onclick="popupFunc({{i.id}}1)">{{i}}打分</a>
+                <a href="javascript:void(0);" onclick="popupFunc({{i.id}}2)">{{i}}总分</a>
+            </p>
          {% endfor %}
 
-        <ul class="pagination" style="background-color:rgb(240,255,251);height:auto;width:auto;">
+        <ul class="pagination" style="background-color:rgb(240,255,251);height:auto;width:auto;left:700px;">
             {% if paginator_object.has_previous %}
                 <li>
                     <a href="?page={{paginator_object.previous_page_number}}" aria-label="Previous">

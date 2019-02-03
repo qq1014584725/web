@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^check/case/$', views.comments_case, name='comments_case'),
     url(r'^zhuanjia/user/(\d+)$', views.zhuanjiatostudent, name='zhuanjiatostudent'),
     url(r'^danwei/user/(\d+)$', views.danweitostudent, name='danweitostudent'),
+    url(r'^student/user/student_score/$', views.student_score, name='student_score')
 
     # url(r'^(?P<title>.+)/$', views.checkwindow, name='checkwindow'),
 ]
