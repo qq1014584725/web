@@ -218,7 +218,7 @@ def studentuser(request):
             if i.id != user.id:
                 student.append(i)
 
-        paginator = Paginator(student, 1)
+        paginator = Paginator(student, 10)
         paginator_object = paginator.get_page(page_num)
         current_page = paginator_object.number
         page_range = []
